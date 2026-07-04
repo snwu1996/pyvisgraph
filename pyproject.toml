@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "pyvisgraph"
+version = "0.2.1"
+description = "Given a set of simple obstacle polygons, build a visibility graph and find the shortest path between two points."
+authors = ["Christian Reksten-Monsen <christian@reksten-monsen.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/TaipanRex/pyvisgraph"
+repository = "https://github.com/TaipanRex/pyvisgraph"
+keywords = ["visibility", "graph", "shortest"]
+packages = [{ include = "pyvisgraph" }]
+include = [
+    { path = "examples", format = "sdist" },
+    { path = "CONTRIBUTING.md", format = "sdist" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+tqdm = ">=4.23.4"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0"
+pyshp = "^2.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
