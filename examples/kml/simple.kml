@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>pyvisgraph simple example - 3 convex obstacles</name>
+    <Placemark>
+      <name>rectangle</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.010,51.010,0 6.030,51.010,0 6.030,51.025,0 6.010,51.025,0 6.010,51.010,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>triangle</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.045,51.030,0 6.065,51.030,0 6.055,51.050,0 6.045,51.030,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>hexagon</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.092,51.0150,0 6.086,51.0254,0 6.074,51.0254,0 6.068,51.0150,0 6.074,51.0046,0 6.086,51.0046,0 6.092,51.0150,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>
