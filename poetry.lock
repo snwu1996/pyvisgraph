@@ -659,5 +659,5 @@ viewer = ["PyQt6", "geopandas"]
 
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.9"
-content-hash = "54534fd793202bdc58310546b3e045318b8ff3e8665f416878044e1a4319a5ff"
+python-versions = "^3.10"
+content-hash = "c7cbe1179002287d05bd089e0a4fb5f97101edf1b1eabe6578f0f1146ef22e27"

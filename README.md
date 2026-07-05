@@ -21,7 +21,7 @@ built with Pyvisgraph.
 ```
 $ pip install pyvisgraph
 ```
-Pyvisgraph requires Python 3.9+.
+Pyvisgraph requires Python 3.10+.
 
 ## Usage
 Here is an example of building a visibility graph given a list of
