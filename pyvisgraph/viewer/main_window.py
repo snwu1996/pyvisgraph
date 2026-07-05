@@ -162,7 +162,9 @@ class MainWindow(QMainWindow):
     def on_point_clicked(self, x: float, y: float, button: Qt.MouseButton):
         if self.visgraph is None or button != Qt.MouseButton.LeftButton:
             return
-        point, note = self._snap_outside(vg.Point(x, y))
+        point = vg.Point(x, y)
+        note = (' (point is inside an obstacle)'
+                if self.visgraph.point_in_solid(point) else '')
         if self.start is None or self.end is not None:
             # First click of a new pair: set the start, drop any old path.
             self.start = point
@@ -174,15 +176,6 @@ class MainWindow(QMainWindow):
             self.end = point
             self.scene.set_end(point)
         self.update_path(note)
-
-    def _snap_outside(self, point: vg.Point):
-        """Move a point that lands inside an obstacle just outside of it."""
-        assert self.visgraph is not None
-        polygon_id = self.visgraph.point_in_polygon(point)
-        if polygon_id < 0:
-            return point, ''
-        snapped = self.visgraph.closest_point(point, polygon_id)
-        return snapped, ' (point was inside an obstacle, snapped outside)'
 
     def clear_points(self):
         self.start = None
@@ -197,6 +190,20 @@ class MainWindow(QMainWindow):
         if self.visgraph is None or self.start is None or self.end is None:
             self._status_bar().showMessage(
                 'Start set - click again to set end' + note)
+            return
+        # A point in solid obstacle space can never be on a valid path; the
+        # search is not run for it as it may thread through the boundary.
+        # Points in the hole of a donut-shaped obstacle are free space and
+        # get a real search (paths within the hole, none to the outside).
+        blocked = [name for name, p in (('start', self.start),
+                                        ('end', self.end))
+                   if self.visgraph.point_in_solid(p)]
+        if blocked:
+            what = ('both points are' if len(blocked) == 2 else
+                    'the {} point is'.format(blocked[0]))
+            self.scene.set_path(None)
+            self._status_bar().showMessage(
+                'No path found: {} inside an obstacle'.format(what))
             return
         path = self.visgraph.shortest_path(self.start, self.end)
         if not path or len(path) < 2:
