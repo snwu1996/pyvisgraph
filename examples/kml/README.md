@@ -20,6 +20,10 @@ poetry run pyvisgraph-viewer examples/kml/nopath.kml
   two points inside the courtyard can reach each other, but no path exists
   between the courtyard and the outside.
 
+The `benchmark/` folder holds 20 generated maps for
+`examples/profile_shortest_path.py`; see `benchmark/benchmarks.md` for
+per-map descriptions and the latest timing report.
+
 In the viewer: click to set the start point (green), click again to set the
 end point (dark red). The shortest path is drawn in red once both are set;
 the next click starts a new pair. If either point lands inside an obstacle,

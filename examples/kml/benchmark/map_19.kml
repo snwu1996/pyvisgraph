@@ -1,0 +1,846 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>pyvisgraph benchmark map 19 - 105 obstacles</name>
+    <Placemark>
+      <name>obstacle_0</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.481468,51.164718,0 6.477061,51.165473,0 6.475555,51.168180,0 6.459788,51.164711,0 6.460077,51.162886,0 6.465374,51.151636,0 6.480169,51.151203,0 6.479053,51.157169,0 6.481468,51.164718,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_1</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.481858,51.163192,0 6.473133,51.170120,0 6.471419,51.168421,0 6.467777,51.168016,0 6.462008,51.157702,0 6.467629,51.155653,0 6.467459,51.154232,0 6.481858,51.163192,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_2</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.027125,51.041358,0 6.020647,51.029428,0 6.020070,51.026861,0 6.028293,51.019374,0 6.029925,51.019462,0 6.030613,51.022671,0 6.027125,51.041358,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_3</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.027822,51.033144,0 6.026523,51.030066,0 6.042692,51.023957,0 6.044579,51.026984,0 6.027822,51.033144,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_4</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.455845,51.346748,0 6.461221,51.337706,0 6.460756,51.335764,0 6.461833,51.334825,0 6.455845,51.346748,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_5</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.480119,51.339870,0 6.481102,51.341004,0 6.477294,51.342151,0 6.475493,51.347116,0 6.471638,51.345786,0 6.469886,51.345578,0 6.480119,51.339870,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_6</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.223741,51.354255,0 6.216615,51.354195,0 6.215577,51.355904,0 6.209289,51.340991,0 6.223741,51.354255,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_7</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.229839,51.356538,0 6.225380,51.355245,0 6.222167,51.360913,0 6.220866,51.358988,0 6.208350,51.352364,0 6.210372,51.345722,0 6.211028,51.345703,0 6.219659,51.339903,0 6.229839,51.356538,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_8</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.222482,51.346764,0 6.214902,51.353882,0 6.202613,51.348592,0 6.203998,51.345936,0 6.205483,51.343965,0 6.223140,51.341852,0 6.222482,51.346764,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_9</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.476172,51.089974,0 6.464849,51.097736,0 6.456731,51.085727,0 6.472765,51.089498,0 6.476172,51.089974,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_10</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.474640,51.089533,0 6.474307,51.089711,0 6.472535,51.095049,0 6.455282,51.093331,0 6.454812,51.091949,0 6.455214,51.091529,0 6.452884,51.080315,0 6.469720,51.086474,0 6.474640,51.089533,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_11</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.476394,51.089404,0 6.471405,51.089872,0 6.455541,51.088120,0 6.466182,51.075848,0 6.476394,51.089404,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_12</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.224751,51.411015,0 6.211657,51.413377,0 6.210950,51.412526,0 6.209651,51.405798,0 6.215417,51.396035,0 6.224751,51.411015,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_13</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.231837,51.404560,0 6.228252,51.404535,0 6.211864,51.410206,0 6.211615,51.403976,0 6.210046,51.400805,0 6.214335,51.393226,0 6.218331,51.394927,0 6.222957,51.395792,0 6.231837,51.404560,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_14</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.223254,51.406520,0 6.217293,51.410485,0 6.205135,51.406668,0 6.202850,51.402095,0 6.203264,51.400284,0 6.205531,51.395861,0 6.209128,51.397642,0 6.223254,51.406520,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_15</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.290080,51.405655,0 6.288227,51.408210,0 6.277998,51.412732,0 6.267532,51.407597,0 6.266239,51.403813,0 6.269713,51.399891,0 6.271183,51.396292,0 6.273620,51.397382,0 6.290080,51.405655,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_16</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.287724,51.403127,0 6.268619,51.406159,0 6.268487,51.397837,0 6.266019,51.396523,0 6.283214,51.390494,0 6.287724,51.403127,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_17</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.043517,51.473014,0 6.031097,51.478535,0 6.024136,51.472126,0 6.042803,51.461738,0 6.042332,51.464902,0 6.044708,51.467004,0 6.044411,51.469573,0 6.043517,51.473014,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_18</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.037380,51.481177,0 6.035722,51.481441,0 6.033978,51.478693,0 6.023190,51.468556,0 6.027887,51.464481,0 6.034570,51.461662,0 6.039936,51.467256,0 6.040997,51.467938,0 6.037380,51.481177,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_19</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.047678,51.477614,0 6.031465,51.479012,0 6.030792,51.474825,0 6.031125,51.472190,0 6.039533,51.464548,0 6.051100,51.470544,0 6.047678,51.477614,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_20</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.290243,51.098410,0 6.272437,51.098238,0 6.271558,51.097435,0 6.269720,51.093543,0 6.275288,51.086673,0 6.275412,51.085396,0 6.291006,51.087051,0 6.292777,51.089000,0 6.290243,51.098410,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_21</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.287578,51.106264,0 6.279298,51.086185,0 6.288111,51.086746,0 6.288062,51.091385,0 6.294682,51.093387,0 6.293918,51.094264,0 6.287578,51.106264,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_22</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.479170,51.465572,0 6.475985,51.474045,0 6.464980,51.472496,0 6.459418,51.469080,0 6.471884,51.458359,0 6.477425,51.463551,0 6.479170,51.465572,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_23</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.483619,51.461984,0 6.480857,51.465342,0 6.478474,51.468286,0 6.472244,51.469792,0 6.469829,51.470751,0 6.466611,51.468249,0 6.466145,51.455382,0 6.480142,51.454538,0 6.483619,51.461984,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_24</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.461104,51.468942,0 6.461425,51.467460,0 6.457268,51.463106,0 6.465143,51.451708,0 6.475685,51.450850,0 6.461104,51.468942,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_25</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.414658,51.291105,0 6.405984,51.289187,0 6.405999,51.288839,0 6.402546,51.278400,0 6.414658,51.291105,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_26</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.412782,51.284039,0 6.407943,51.280683,0 6.400940,51.276844,0 6.401496,51.274275,0 6.400507,51.274197,0 6.406795,51.262640,0 6.423529,51.272877,0 6.424588,51.272971,0 6.412782,51.284039,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_27</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.417068,51.282427,0 6.410264,51.287176,0 6.403695,51.285587,0 6.399128,51.275531,0 6.397910,51.275077,0 6.418113,51.270829,0 6.415227,51.273990,0 6.415659,51.275896,0 6.417068,51.282427,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_28</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.288727,51.036961,0 6.272947,51.030243,0 6.274235,51.027764,0 6.275137,51.021124,0 6.275628,51.019429,0 6.275239,51.017502,0 6.279524,51.015703,0 6.281668,51.017445,0 6.288727,51.036961,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_29</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.284767,51.035458,0 6.279788,51.032913,0 6.273692,51.023263,0 6.284798,51.014238,0 6.289872,51.018728,0 6.284767,51.035458,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_30</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.295781,51.030721,0 6.287661,51.041396,0 6.277835,51.037723,0 6.278288,51.023094,0 6.295781,51.030721,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_31</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.223312,51.466391,0 6.219966,51.469659,0 6.218991,51.469623,0 6.214997,51.476217,0 6.203530,51.471462,0 6.204397,51.465538,0 6.203802,51.464492,0 6.209345,51.454023,0 6.223312,51.466391,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_32</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.217981,51.467184,0 6.217177,51.466724,0 6.201963,51.460031,0 6.202377,51.457253,0 6.218212,51.454114,0 6.217467,51.458908,0 6.217981,51.467184,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_33</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.217023,51.471819,0 6.212854,51.478766,0 6.198702,51.475412,0 6.202813,51.462390,0 6.205781,51.459825,0 6.211855,51.460106,0 6.213604,51.459871,0 6.213169,51.460755,0 6.217023,51.471819,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_34</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.159094,51.478170,0 6.155832,51.483249,0 6.141671,51.476465,0 6.144406,51.467900,0 6.146303,51.468878,0 6.144309,51.465752,0 6.150765,51.466352,0 6.159094,51.478170,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_35</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.157017,51.487383,0 6.154991,51.485764,0 6.156371,51.487449,0 6.141198,51.484245,0 6.150696,51.469549,0 6.155349,51.473591,0 6.157017,51.487383,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_36</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.224399,51.226083,0 6.213325,51.221052,0 6.209794,51.222746,0 6.212101,51.219771,0 6.224661,51.205452,0 6.226807,51.206211,0 6.224399,51.226083,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_37</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.231342,51.217106,0 6.224547,51.220279,0 6.213873,51.208857,0 6.213888,51.204493,0 6.226043,51.202666,0 6.231342,51.217106,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_38</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.229371,51.213668,0 6.215141,51.221477,0 6.211048,51.217127,0 6.206582,51.210615,0 6.211916,51.202559,0 6.222322,51.199969,0 6.225207,51.202071,0 6.226922,51.204167,0 6.229371,51.213668,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_39</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.284497,51.158420,0 6.275462,51.166099,0 6.269820,51.162150,0 6.266681,51.155772,0 6.267193,51.154276,0 6.268836,51.152707,0 6.282148,51.149202,0 6.284497,51.158420,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_40</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.282072,51.159987,0 6.274660,51.163003,0 6.270928,51.160131,0 6.266562,51.145202,0 6.272382,51.146391,0 6.282072,51.159987,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_41</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.278033,51.170563,0 6.278271,51.171326,0 6.275874,51.172130,0 6.265341,51.161525,0 6.266881,51.155436,0 6.268565,51.155376,0 6.284612,51.156745,0 6.278033,51.170563,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_42</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.093725,51.224072,0 6.093012,51.223792,0 6.086399,51.218324,0 6.090496,51.205327,0 6.105876,51.214039,0 6.093725,51.224072,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_43</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.093971,51.224660,0 6.083700,51.213717,0 6.096357,51.205088,0 6.101870,51.207867,0 6.100022,51.212052,0 6.093971,51.224660,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_44</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.473908,51.412705,0 6.470876,51.415676,0 6.460350,51.418729,0 6.454857,51.413106,0 6.462663,51.400769,0 6.466120,51.400043,0 6.473908,51.412705,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_45</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.476537,51.411344,0 6.461849,51.416033,0 6.457388,51.408980,0 6.477362,51.408969,0 6.476583,51.409320,0 6.476537,51.411344,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_46</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.104934,51.464691,0 6.101378,51.471732,0 6.096283,51.473600,0 6.093833,51.473417,0 6.092001,51.471213,0 6.087788,51.462424,0 6.088585,51.461978,0 6.104934,51.464691,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_47</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.110115,51.468123,0 6.100543,51.476656,0 6.090226,51.471744,0 6.090664,51.465728,0 6.106097,51.458348,0 6.110115,51.468123,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_48</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.027353,51.351476,0 6.021011,51.352831,0 6.018979,51.346101,0 6.028677,51.334921,0 6.027353,51.351476,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_49</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.027002,51.332884,0 6.029046,51.329327,0 6.029565,51.329967,0 6.040335,51.335157,0 6.027002,51.332884,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_50</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.024362,51.100503,0 6.020941,51.093806,0 6.019766,51.088839,0 6.032686,51.081495,0 6.040930,51.091153,0 6.024362,51.100503,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_51</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.029832,51.101428,0 6.016725,51.097569,0 6.013961,51.097352,0 6.014528,51.094394,0 6.016473,51.087409,0 6.030352,51.086269,0 6.029832,51.101428,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_52</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.462562,51.283700,0 6.461707,51.283053,0 6.457607,51.276611,0 6.463028,51.268297,0 6.462521,51.265826,0 6.462389,51.264716,0 6.468449,51.265897,0 6.462562,51.283700,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_53</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.474264,51.278911,0 6.472012,51.281644,0 6.469961,51.285456,0 6.457097,51.286943,0 6.455875,51.280659,0 6.471708,51.272243,0 6.474188,51.275121,0 6.474264,51.278911,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_54</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.477351,51.272637,0 6.475395,51.274641,0 6.477817,51.275854,0 6.475348,51.276932,0 6.458518,51.272339,0 6.460586,51.264092,0 6.465302,51.262338,0 6.477351,51.272637,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_55</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.229628,51.043433,0 6.227788,51.045684,0 6.222364,51.045109,0 6.220617,51.044976,0 6.214966,51.040304,0 6.213478,51.026554,0 6.225004,51.027189,0 6.229219,51.028601,0 6.229628,51.043433,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_56</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.228401,51.048066,0 6.226548,51.031174,0 6.229103,51.032745,0 6.233021,51.033457,0 6.233265,51.034658,0 6.228401,51.048066,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_57</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.225490,51.049618,0 6.216017,51.047228,0 6.216257,51.046345,0 6.213313,51.037286,0 6.219323,51.033480,0 6.224882,51.029789,0 6.234831,51.035788,0 6.231519,51.039284,0 6.225490,51.049618,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_58</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.234434,51.280419,0 6.233476,51.283461,0 6.220448,51.287211,0 6.214846,51.285141,0 6.215187,51.278078,0 6.214254,51.275581,0 6.222091,51.269472,0 6.222643,51.268458,0 6.234434,51.280419,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_59</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.237156,51.282179,0 6.227403,51.289709,0 6.227351,51.288150,0 6.224870,51.271223,0 6.226808,51.269605,0 6.233489,51.265897,0 6.234597,51.270273,0 6.239215,51.276539,0 6.237156,51.282179,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_60</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.476150,51.036880,0 6.472397,51.039541,0 6.460613,51.027259,0 6.481205,51.028343,0 6.476150,51.036880,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_61</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.479659,51.037600,0 6.479306,51.041590,0 6.480058,51.042990,0 6.471073,51.043517,0 6.466885,51.041438,0 6.461776,51.030244,0 6.470772,51.025442,0 6.481704,51.034366,0 6.479659,51.037600,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_62</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.161913,51.040862,0 6.154270,51.039538,0 6.144723,51.028309,0 6.152800,51.020346,0 6.156410,51.022512,0 6.156787,51.020504,0 6.165132,51.023585,0 6.161913,51.040862,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_63</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.164569,51.035958,0 6.160229,51.035703,0 6.157110,51.039817,0 6.147942,51.038917,0 6.142174,51.034845,0 6.142328,51.030845,0 6.152593,51.022536,0 6.154977,51.025184,0 6.164569,51.035958,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_64</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.166805,51.037879,0 6.165959,51.039068,0 6.159768,51.040212,0 6.158835,51.038965,0 6.165106,51.019690,0 6.166078,51.018207,0 6.168558,51.022263,0 6.166805,51.037879,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_65</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.100897,51.028947,0 6.081422,51.033625,0 6.078594,51.026686,0 6.083780,51.019117,0 6.086827,51.019803,0 6.091401,51.016357,0 6.091961,51.020229,0 6.100897,51.028947,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_66</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.096691,51.025743,0 6.094421,51.031034,0 6.092579,51.033905,0 6.085237,51.016848,0 6.093010,51.015968,0 6.096691,51.025743,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_67</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.417905,51.407620,0 6.418609,51.407947,0 6.406396,51.413173,0 6.397081,51.401158,0 6.407998,51.394970,0 6.416792,51.397455,0 6.414995,51.400687,0 6.415733,51.401299,0 6.417905,51.407620,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_68</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.410018,51.408419,0 6.397833,51.402300,0 6.402638,51.398830,0 6.399475,51.395242,0 6.402935,51.392811,0 6.408546,51.388734,0 6.414316,51.391179,0 6.410018,51.408419,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_69</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.163267,51.160400,0 6.160631,51.166139,0 6.159028,51.168632,0 6.151934,51.167363,0 6.143054,51.160385,0 6.145993,51.154358,0 6.145717,51.151209,0 6.163267,51.160400,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_70</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.153634,51.173525,0 6.144853,51.168717,0 6.153300,51.153617,0 6.159705,51.158979,0 6.153634,51.173525,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_71</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.162062,51.166119,0 6.156130,51.170954,0 6.144871,51.155947,0 6.150929,51.148296,0 6.162062,51.166119,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_72</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.358216,51.031771,0 6.351073,51.037538,0 6.346241,51.039601,0 6.339873,51.032115,0 6.339456,51.024867,0 6.354283,51.025731,0 6.358216,51.031771,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_73</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.350360,51.032811,0 6.346742,51.038274,0 6.335296,51.036960,0 6.332484,51.039123,0 6.336025,51.022315,0 6.336121,51.019724,0 6.347203,51.024097,0 6.350776,51.028192,0 6.350360,51.032811,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_74</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.360272,51.035517,0 6.349432,51.043200,0 6.340698,51.034905,0 6.341195,51.033364,0 6.339563,51.033521,0 6.342153,51.021418,0 6.354175,51.022912,0 6.360272,51.035517,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_75</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.219028,51.107438,0 6.219425,51.103246,0 6.217720,51.104041,0 6.215148,51.101022,0 6.215734,51.100433,0 6.213267,51.101669,0 6.227173,51.089096,0 6.219028,51.107438,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_76</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.235783,51.097167,0 6.223254,51.104022,0 6.216438,51.086393,0 6.220777,51.086896,0 6.225430,51.084718,0 6.235783,51.097167,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_77</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.234349,51.102781,0 6.231723,51.103679,0 6.232695,51.105227,0 6.217736,51.109141,0 6.211002,51.099987,0 6.222203,51.092341,0 6.234349,51.102781,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_78</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.293657,51.226122,0 6.290145,51.229428,0 6.286745,51.233080,0 6.276074,51.227039,0 6.273506,51.223459,0 6.277330,51.216915,0 6.293123,51.219739,0 6.293657,51.226122,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_79</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.299865,51.233770,0 6.295556,51.235548,0 6.286552,51.236956,0 6.278231,51.227303,0 6.284167,51.217672,0 6.296547,51.218974,0 6.300469,51.220790,0 6.299865,51.233770,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_80</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.295301,51.223763,0 6.292885,51.228053,0 6.291724,51.227235,0 6.284968,51.226357,0 6.281349,51.228538,0 6.295301,51.223763,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_81</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.096694,51.161570,0 6.098228,51.167345,0 6.096151,51.166863,0 6.080732,51.166136,0 6.079939,51.161777,0 6.085852,51.150301,0 6.098378,51.156923,0 6.096694,51.161570,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_82</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.104971,51.158834,0 6.083336,51.149899,0 6.091661,51.146969,0 6.101852,51.149847,0 6.104971,51.158834,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_83</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.100784,51.408595,0 6.096917,51.408930,0 6.090408,51.415682,0 6.079544,51.405640,0 6.092646,51.395325,0 6.100784,51.408595,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_84</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.091170,51.413816,0 6.083863,51.418461,0 6.085273,51.397648,0 6.091207,51.401911,0 6.095081,51.404774,0 6.091170,51.413816,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_85</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.096790,51.416079,0 6.096710,51.419769,0 6.081400,51.411070,0 6.086755,51.400605,0 6.100645,51.404092,0 6.096790,51.416079,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_86</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.290722,51.289501,0 6.279534,51.287151,0 6.277359,51.282198,0 6.278921,51.275761,0 6.283557,51.272100,0 6.284958,51.271160,0 6.292349,51.276650,0 6.297763,51.282578,0 6.290722,51.289501,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_87</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.289008,51.292527,0 6.277781,51.285553,0 6.278963,51.282069,0 6.282124,51.280085,0 6.281177,51.275866,0 6.284045,51.276822,0 6.293341,51.275360,0 6.296914,51.278897,0 6.289008,51.292527,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_88</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.106647,51.098387,0 6.102982,51.101425,0 6.100838,51.104801,0 6.095839,51.103394,0 6.092011,51.095766,0 6.091508,51.089697,0 6.102639,51.086034,0 6.110828,51.091897,0 6.106647,51.098387,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_89</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.107351,51.100341,0 6.102759,51.102529,0 6.087654,51.092694,0 6.096666,51.087365,0 6.098641,51.087194,0 6.108852,51.089723,0 6.107351,51.100341,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_90</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.413493,51.027366,0 6.414117,51.031837,0 6.410928,51.031948,0 6.407218,51.038675,0 6.395695,51.030933,0 6.397137,51.021142,0 6.400803,51.016826,0 6.413493,51.027366,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_91</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.412987,51.021786,0 6.409799,51.022922,0 6.412226,51.025794,0 6.403596,51.030210,0 6.401093,51.032491,0 6.397776,51.028329,0 6.403697,51.010253,0 6.412987,51.021786,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_92</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.157511,51.353054,0 6.155490,51.356090,0 6.143876,51.339503,0 6.150787,51.338604,0 6.160804,51.337344,0 6.162204,51.339048,0 6.157511,51.353054,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_93</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.152532,51.351640,0 6.150038,51.351414,0 6.148701,51.349142,0 6.151324,51.332625,0 6.164467,51.341498,0 6.152532,51.351640,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_94</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.150628,51.355204,0 6.149050,51.357049,0 6.145725,51.355576,0 6.142091,51.337835,0 6.151429,51.336485,0 6.157279,51.336689,0 6.161021,51.342999,0 6.150628,51.355204,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_95</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.353809,51.097669,0 6.352075,51.101745,0 6.338522,51.091605,0 6.341073,51.086184,0 6.348668,51.082197,0 6.353809,51.097669,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_96</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.361758,51.100260,0 6.357019,51.103207,0 6.356178,51.102916,0 6.340008,51.100425,0 6.342125,51.091662,0 6.341168,51.089840,0 6.347911,51.086569,0 6.356818,51.089771,0 6.361758,51.100260,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_97</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.353815,51.225851,0 6.352795,51.229607,0 6.346783,51.233091,0 6.346155,51.233963,0 6.333689,51.220396,0 6.348773,51.212559,0 6.353815,51.225851,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_98</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.353092,51.232070,0 6.350491,51.233371,0 6.350154,51.236958,0 6.347026,51.235885,0 6.336354,51.229328,0 6.353092,51.232070,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_99</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.039018,51.161317,0 6.027612,51.169198,0 6.023082,51.165112,0 6.018964,51.160556,0 6.015392,51.157683,0 6.035822,51.156609,0 6.039018,51.161317,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_100</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.027783,51.166480,0 6.022049,51.164041,0 6.018804,51.157385,0 6.029296,51.145773,0 6.037327,51.152849,0 6.027783,51.166480,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_101</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.026369,51.410764,0 6.022435,51.405943,0 6.030164,51.393924,0 6.040044,51.394743,0 6.041462,51.398123,0 6.026369,51.410764,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_102</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.028010,51.415051,0 6.023524,51.415502,0 6.025235,51.414116,0 6.024852,51.410183,0 6.022633,51.409566,0 6.035856,51.399626,0 6.036602,51.399408,0 6.041093,51.405633,0 6.028010,51.415051,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_103</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.040124,51.414433,0 6.038420,51.418283,0 6.024789,51.401392,0 6.044576,51.406893,0 6.040124,51.414433,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_104</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.406727,51.110454,0 6.400634,51.106661,0 6.412015,51.092167,0 6.412465,51.091686,0 6.406727,51.110454,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>

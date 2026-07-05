@@ -116,7 +116,17 @@ class TestBenchmarkMaps:
             assert polygon[0] != polygon[-1]
 
     def test_benchmark_maps_present(self):
-        assert len(benchmark_maps()) == 10
+        assert len(benchmark_maps()) == 20
+
+    @pytest.mark.parametrize(
+        'map_path', [m for m in benchmark_maps()
+                     if int(os.path.basename(m)[4:6]) >= 11],
+        ids=os.path.basename)
+    def test_overlap_benchmark_maps_dissolve(self, map_path):
+        # Maps 11-20 draw obstacles as clusters of overlapping shapes;
+        # dissolving must reduce the polygon count.
+        result = load_polygons(map_path)
+        assert len(result.polygons) < len(result.raw_polygons)
 
     def test_smallest_benchmark_map_builds_and_routes(self):
         result = load_polygons(os.path.join(KML_DIR, 'benchmark',

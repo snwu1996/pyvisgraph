@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>pyvisgraph benchmark map 11 - 3 obstacles</name>
+    <Placemark>
+      <name>obstacle_0</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.398559,51.409385,0 6.413804,51.420430,0 6.356360,51.439299,0 6.357602,51.352366,0 6.388080,51.353378,0 6.398559,51.409385,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_1</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.421668,51.422585,0 6.422745,51.430868,0 6.354595,51.387735,0 6.401262,51.376828,0 6.405378,51.389979,0 6.421668,51.422585,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_2</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.344811,51.444839,0 6.305474,51.408889,0 6.306800,51.395733,0 6.325521,51.361592,0 6.334625,51.364717,0 6.344811,51.444839,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>

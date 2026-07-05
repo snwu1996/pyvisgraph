@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>pyvisgraph benchmark map 12 - 6 obstacles</name>
+    <Placemark>
+      <name>obstacle_0</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.398502,51.187909,0 6.385411,51.176390,0 6.325956,51.166889,0 6.339671,51.138572,0 6.345953,51.112708,0 6.398502,51.187909,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_1</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.378952,51.169963,0 6.323413,51.109605,0 6.333482,51.117022,0 6.361068,51.114854,0 6.367865,51.112839,0 6.392697,51.127874,0 6.378952,51.169963,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_2</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.383227,51.167681,0 6.368503,51.191394,0 6.365612,51.190301,0 6.332398,51.190331,0 6.322008,51.173423,0 6.314652,51.124736,0 6.330650,51.108891,0 6.366699,51.110146,0 6.383227,51.167681,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_3</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.149323,51.151796,0 6.109103,51.158393,0 6.112018,51.139996,0 6.105838,51.104267,0 6.137297,51.074499,0 6.149323,51.151796,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_4</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.146725,51.153410,0 6.086373,51.161606,0 6.090667,51.123748,0 6.124779,51.098046,0 6.146725,51.153410,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>obstacle_5</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.104320,51.144576,0 6.095902,51.142111,0 6.094330,51.117003,0 6.078207,51.103049,0 6.096297,51.083919,0 6.121597,51.066920,0 6.104320,51.144576,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>
