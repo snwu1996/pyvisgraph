@@ -3,8 +3,9 @@ import math
 import os
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QAction
-from PyQt6.QtWidgets import QMainWindow, QProgressBar
+from PyQt6.QtGui import QAction, QKeySequence
+from PyQt6.QtWidgets import (QFileDialog, QMainWindow, QMessageBox,
+                             QProgressBar)
 
 import pyvisgraph as vg
 
@@ -13,29 +14,40 @@ from pyvisgraph.viewer.scene import VisGraphScene
 from pyvisgraph.viewer.view import GraphView
 from pyvisgraph.viewer.worker import BuildWorker
 
+FILE_FILTER = ('Geometry files (*.kml *.geojson *.json *.shp *.gpkg *.zip);;'
+               'All files (*)')
+CLICK_HINT = 'click to set start, click again to set end'
+
 
 class MainWindow(QMainWindow):
 
     def __init__(self, path, workers=1, layer=None):
         super().__init__()
-        self.setWindowTitle('pyvisgraph viewer - {}'.format(
-            os.path.basename(path)))
         self.resize(1000, 750)
 
+        self.workers = workers
+        self.worker = None
         self.visgraph = None
         self.start = None
         self.end = None
-
-        result = load_polygons(path, layer=layer)
-        self.polygons = result.polygons
+        self.polygons = []
+        self._bounds = None
+        self._fitted = False
 
         self.scene = VisGraphScene(self)
-        self.scene.set_polygons(self.polygons)
         self.view = GraphView(self.scene, self)
         self.view.pointClicked.connect(self.on_point_clicked)
         self.setCentralWidget(self.view)
-        self._bounds = result.bounds
-        self._fitted = False
+
+        file_menu = self.menuBar().addMenu('&File')
+        open_action = QAction('&Open...', self)
+        open_action.setShortcut(QKeySequence.StandardKey.Open)
+        open_action.triggered.connect(self.open_file_dialog)
+        file_menu.addAction(open_action)
+        quit_action = QAction('&Quit', self)
+        quit_action.setShortcut(QKeySequence.StandardKey.Quit)
+        quit_action.triggered.connect(self.close)
+        file_menu.addAction(quit_action)
 
         toolbar = self.addToolBar('View')
         toolbar.setMovable(False)
@@ -56,6 +68,33 @@ class MainWindow(QMainWindow):
         self.busy_bar.setMaximumWidth(160)
         self.statusBar().addPermanentWidget(self.busy_bar)
 
+        self.load_file(path, layer=layer)
+
+    def load_file(self, path, layer=None):
+        """Load a geometry file and start building its visibility graph.
+
+        Raises on unreadable/polygon-free files, leaving the current
+        state untouched when called from the Open dialog.
+        """
+        result = load_polygons(path, layer=layer)
+
+        self.setWindowTitle('pyvisgraph viewer - {}'.format(
+            os.path.basename(path)))
+        self.polygons = result.polygons
+        self.visgraph = None
+        self.start = None
+        self.end = None
+        self.scene.set_start(None)
+        self.scene.set_end(None)
+        self.scene.set_path(None)
+        self.scene.set_vis_edges([])
+        self.scene.set_polygons(self.polygons)
+        self._bounds = result.bounds
+        if self._fitted:
+            self.view.fit_bounds(*self._bounds)
+
+        self.toggle_edges_action.setEnabled(False)
+        self.busy_bar.show()
         skipped_note = ('' if not result.skipped else
                         ' ({} non-polygon geometries skipped)'.format(
                             result.skipped))
@@ -63,10 +102,22 @@ class MainWindow(QMainWindow):
             'Building visibility graph ({} polygons)...{}'.format(
                 len(self.polygons), skipped_note))
 
-        self.worker = BuildWorker(self.polygons, workers=workers, parent=self)
+        self.worker = BuildWorker(self.polygons, workers=self.workers,
+                                  parent=self)
         self.worker.finished_ok.connect(self.on_build_finished)
         self.worker.failed.connect(self.on_build_failed)
         self.worker.start()
+
+    def open_file_dialog(self):
+        path, _ = QFileDialog.getOpenFileName(
+            self, 'Open geometry file', '', FILE_FILTER)
+        if not path:
+            return
+        try:
+            self.load_file(path)
+        except Exception as e:
+            QMessageBox.critical(self, 'Load failed',
+                                 'Could not load {}:\n{}'.format(path, e))
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -77,32 +128,37 @@ class MainWindow(QMainWindow):
             self.view.fit_bounds(*self._bounds)
 
     def on_build_finished(self, graph):
+        if self.sender() is not self.worker:
+            return  # stale result from a build superseded by File > Open
         self.visgraph = graph
         edges = graph.visgraph.get_edges()
         self.scene.set_vis_edges(edges)
         self.toggle_edges_action.setEnabled(True)
         self.busy_bar.hide()
         self.statusBar().showMessage(
-            'Ready ({} visibility edges) - left-click sets start, '
-            'right-click sets end'.format(len(edges)))
+            'Ready ({} visibility edges) - {}'.format(len(edges), CLICK_HINT))
 
     def on_build_failed(self, message):
+        if self.sender() is not self.worker:
+            return
         self.busy_bar.hide()
         self.statusBar().showMessage(
             'Failed to build visibility graph: {}'.format(message))
 
     def on_point_clicked(self, x, y, button):
-        if self.visgraph is None:
-            return  # still building
+        if self.visgraph is None or button != Qt.MouseButton.LeftButton:
+            return
         point, note = self._snap_outside(vg.Point(x, y))
-        if button == Qt.MouseButton.LeftButton:
+        if self.start is None or self.end is not None:
+            # First click of a new pair: set the start, drop any old path.
             self.start = point
+            self.end = None
             self.scene.set_start(point)
-        elif button == Qt.MouseButton.RightButton:
+            self.scene.set_end(None)
+            self.scene.set_path(None)
+        else:
             self.end = point
             self.scene.set_end(point)
-        else:
-            return
         self.update_path(note)
 
     def _snap_outside(self, point):
@@ -120,14 +176,12 @@ class MainWindow(QMainWindow):
         self.scene.set_end(None)
         self.scene.set_path(None)
         if self.visgraph is not None:
-            self.statusBar().showMessage(
-                'Points cleared - left-click sets start, right-click sets end')
+            self.statusBar().showMessage('Points cleared - ' + CLICK_HINT)
 
     def update_path(self, note=''):
-        if self.start is None or self.end is None:
+        if self.end is None:
             self.statusBar().showMessage(
-                ('Start set - right-click to set end' if self.end is None
-                 else 'End set - left-click to set start') + note)
+                'Start set - click again to set end' + note)
             return
         path = self.visgraph.shortest_path(self.start, self.end)
         if not path or len(path) < 2:

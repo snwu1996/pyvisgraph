@@ -15,8 +15,8 @@ def main(argv=None):
         description='Interactive viewer: load polygons from any '
                     'geopandas-supported file (KML, shapefile, GeoJSON, '
                     'GPKG, ...), build the visibility graph and explore '
-                    'shortest paths. Left-click sets the start point, '
-                    'right-click sets the end point.')
+                    'shortest paths. Click to set the start point, click '
+                    'again to set the end point.')
     parser.add_argument('file', help='path to a geopandas-readable file')
     parser.add_argument('--workers', type=int, default=1,
                         help='number of subprocesses for building the '

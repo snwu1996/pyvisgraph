@@ -13,5 +13,6 @@ poetry run pyvisgraph-viewer examples/kml/complex.kml
 - **medium.kml** — concave L/U shapes, a star, a MultiGeometry placemark and a polygon with a hole.
 - **complex.kml** — a maze of 20 staggered wall segments; paths must zig-zag through the gaps.
 
-In the viewer: left-click sets the start point (green), right-click sets the
-end point (dark red). The shortest path is drawn in red once both are set.
+In the viewer: click to set the start point (green), click again to set the
+end point (dark red). The shortest path is drawn in red once both are set;
+the next click starts a new pair. Files can also be opened via File > Open.
