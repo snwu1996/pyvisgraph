@@ -24,7 +24,7 @@ SOFTWARE.
 from collections import defaultdict
 
 
-class Point(object):
+class Point:
     __slots__ = ('x', 'y', 'polygon_id')
 
     def __init__(self, x, y, polygon_id=-1):
@@ -55,7 +55,7 @@ class Point(object):
         return "Point(%.2f, %.2f)" % (self.x, self.y)
 
 
-class Edge(object):
+class Edge:
     __slots__ = ('p1', 'p2')
 
     def __init__(self, point1, point2):
@@ -90,7 +90,7 @@ class Edge(object):
         return self.p1.__hash__() ^ self.p2.__hash__()
 
 
-class Graph(object):
+class Graph:
     """
     A Graph is represented by a dict where the keys are Points in the Graph
     and the dict values are sets containing Edges incident on each Point.

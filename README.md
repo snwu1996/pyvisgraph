@@ -21,7 +21,7 @@ built with Pyvisgraph.
 ```
 $ pip install pyvisgraph
 ```
-Pyvisgraph supports Python 2 and 3.
+Pyvisgraph requires Python 3.9+.
 
 ## Usage
 Here is an example of building a visibility graph given a list of
@@ -33,7 +33,7 @@ simple polygons:
 >>> g = vg.VisGraph()
 >>> g.build(polys)
 >>> shortest = g.shortest_path(vg.Point(1.5,0.0), vg.Point(4.0, 6.0))
->>> print shortest
+>>> print(shortest)
 [Point(1.50, 0.00), Point(3.00, 1.00), Point(4.00, 6.00)]
 ```
 Once the visibility graph is built, it can be saved and subsequently loaded.

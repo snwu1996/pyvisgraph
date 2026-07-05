@@ -24,17 +24,6 @@ SOFTWARE.
 from heapq import heapify, heappush, heappop
 from pyvisgraph.visible_vertices import edge_distance
 
-try:
-    dict.iteritems
-except AttributeError:
-    # Python 3
-    def iteritems(d):
-        return iter(d.items())
-else:
-    # Python 2
-    def iteritems(d):
-        return d.iteritems()
-
 
 def dijkstra(graph, origin, destination, add_to_visgraph):
     D = {}
@@ -87,11 +76,11 @@ class priority_dict(dict):
     https://gist.github.com/anonymous/4435950
     """
     def __init__(self, *args, **kwargs):
-        super(priority_dict, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._rebuild_heap()
 
     def _rebuild_heap(self):
-        self._heap = [(v, k) for k, v in iteritems(self)]
+        self._heap = [(v, k) for k, v in self.items()]
         heapify(self._heap)
 
     def smallest(self):
@@ -111,7 +100,7 @@ class priority_dict(dict):
         return k
 
     def __setitem__(self, key, val):
-        super(priority_dict, self).__setitem__(key, val)
+        super().__setitem__(key, val)
 
         if len(self._heap) < 2 * len(self):
             heappush(self._heap, (val, key))
@@ -125,7 +114,7 @@ class priority_dict(dict):
         return self[key]
 
     def update(self, *args, **kwargs):
-        super(priority_dict, self).update(*args, **kwargs)
+        super().update(*args, **kwargs)
         self._rebuild_heap()
 
     def __iter__(self):

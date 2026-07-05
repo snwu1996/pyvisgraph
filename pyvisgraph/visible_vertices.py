@@ -21,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from __future__ import division
 from math import pi, sqrt, atan, acos
 from pyvisgraph.graph import Point
 
@@ -329,7 +328,7 @@ def edge_intersect(p1, q1, edge):
     return False
 
 
-class OpenEdges(object):
+class OpenEdges:
     def __init__(self):
         self._open_edges = []
 

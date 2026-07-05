@@ -21,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from __future__ import division
 from pyvisgraph.graph import Graph, Point, Edge
 from pyvisgraph.visible_vertices import edge_intersect, point_edge_distance
 from pyvisgraph.visible_vertices import visible_vertices, angle, point_in_polygon

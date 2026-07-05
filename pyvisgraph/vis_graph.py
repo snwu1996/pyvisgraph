@@ -21,26 +21,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from timeit import default_timer
-from sys import stdout, version_info
+import pickle
 from multiprocessing import Pool
 from tqdm import tqdm
-from warnings import warn
 
 from pyvisgraph.graph import Graph, Edge
 from pyvisgraph.shortest_path import shortest_path
 from pyvisgraph.visible_vertices import visible_vertices, point_in_polygon
 from pyvisgraph.visible_vertices import closest_point
 
-PYTHON3 = version_info[0] == 3
-if PYTHON3:
-    xrange = range
-    import pickle
-else:
-    import cPickle as pickle
 
-
-class VisGraph(object):
+class VisGraph:
 
     def __init__(self):
         self.graph = None
@@ -77,14 +68,14 @@ class VisGraph(object):
 
         if workers == 1:
             for batch in tqdm([points[i:i + batch_size]
-                               for i in xrange(0, len(points), batch_size)],
+                               for i in range(0, len(points), batch_size)],
                             disable=not status):
                 for edge in _vis_graph(self.graph, batch):
                     self.visgraph.add_edge(edge)
         else:
             pool = Pool(workers)
             batches = [(self.graph, points[i:i + batch_size])
-                       for i in xrange(0, len(points), batch_size)]
+                       for i in range(0, len(points), batch_size)]
 
             results = list(tqdm(pool.imap(_vis_graph_wrapper, batches), total=len(batches),
                 disable=not status))
