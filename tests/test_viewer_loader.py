@@ -2,6 +2,7 @@
 
 Skipped entirely if the optional 'viewer' extras are not installed.
 """
+import glob
 import os
 
 import pytest
@@ -16,6 +17,11 @@ KML_DIR = os.path.join(os.path.dirname(__file__), '..', 'examples', 'kml')
 
 def kml(name):
     return os.path.join(KML_DIR, name)
+
+
+def benchmark_maps():
+    return sorted(glob.glob(os.path.join(KML_DIR, 'benchmark',
+                                         'map_*.kml')))
 
 
 class TestLoadPolygons:
@@ -93,3 +99,33 @@ class TestLoadPolygons:
         assert len(path) >= 2
         assert path[0] == vg.Point(6.005, 51.005)
         assert path[-1] == vg.Point(6.095, 51.045)
+
+
+class TestBenchmarkMaps:
+    """The maps under examples/kml/benchmark/ feed
+    examples/profile_shortest_path.py; some contain self-intersecting
+    (bowtie) rings that the loader must repair rather than choke on."""
+
+    @pytest.mark.parametrize('map_path', benchmark_maps(),
+                             ids=os.path.basename)
+    def test_benchmark_map_loads(self, map_path):
+        result = load_polygons(map_path)
+        assert result.polygons
+        for polygon in result.polygons:
+            assert len(polygon) >= 3
+            assert polygon[0] != polygon[-1]
+
+    def test_benchmark_maps_present(self):
+        assert len(benchmark_maps()) == 10
+
+    def test_smallest_benchmark_map_builds_and_routes(self):
+        result = load_polygons(os.path.join(KML_DIR, 'benchmark',
+                                            'map_01.kml'))
+        g = vg.VisGraph()
+        g.build(result.polygons, status=False)
+        minx, miny, maxx, maxy = result.bounds
+        origin = vg.Point(minx - 0.01, miny - 0.01)
+        destination = vg.Point(maxx + 0.01, maxy + 0.01)
+        path = g.shortest_path(origin, destination)
+        assert len(path) >= 2
+        assert path[0] == origin and path[-1] == destination

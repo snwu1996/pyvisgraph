@@ -9,9 +9,11 @@ from dataclasses import dataclass
 from typing import Iterable, List, Optional, Sequence, Tuple
 
 import geopandas as gpd
-from shapely.geometry import MultiPolygon, Polygon
+from shapely.geometry import GeometryCollection, MultiPolygon, Polygon
+from shapely.geometry.base import BaseGeometry
 from shapely.geometry.polygon import orient
 from shapely.ops import unary_union
+from shapely.validation import make_valid
 
 from pyvisgraph.graph import Point
 
@@ -43,15 +45,29 @@ def _ring_to_points(coords: Iterable[Sequence[float]]) -> Optional[List[Point]]:
     return points
 
 
+def _polygonal_parts(geom: BaseGeometry) -> List[Polygon]:
+    """Flatten a geometry into its Polygon parts, dropping anything else."""
+    if isinstance(geom, Polygon):
+        return [geom]
+    if isinstance(geom, (MultiPolygon, GeometryCollection)):
+        parts = []
+        for g in geom.geoms:
+            parts.extend(_polygonal_parts(g))
+        return parts
+    return []
+
+
 def load_polygons(path: str, layer: Optional[str] = None) -> LoadResult:
     """Read a geopandas-supported file and return pyvisgraph polygons.
 
-    MultiPolygons are exploded into individual polygons. Overlapping or
-    touching polygons are dissolved into their union, since pyvisgraph's
-    rotational sweep assumes polygon edges never cross; raw_polygons keeps
-    the shapes as read from the file so they can still be displayed.
-    Interior rings (holes) become additional obstacle polygons.
-    Non-polygonal geometries are skipped and counted in LoadResult.skipped.
+    MultiPolygons are exploded into individual polygons. Invalid polygons
+    (e.g. self-intersecting rings) are repaired with make_valid, which
+    splits a bowtie into its lobes. Overlapping or touching polygons are
+    dissolved into their union, since pyvisgraph's rotational sweep assumes
+    polygon edges never cross; raw_polygons keeps the (repaired) shapes so
+    they can still be displayed individually. Interior rings (holes) become
+    additional obstacle polygons. Non-polygonal geometries are skipped and
+    counted in LoadResult.skipped.
     """
     if layer is not None:
         gdf = gpd.read_file(path, layer=layer)
@@ -64,13 +80,15 @@ def load_polygons(path: str, layer: Optional[str] = None) -> LoadResult:
         if geom is None:
             skipped += 1
             continue
-        if geom.geom_type == 'Polygon':
-            parts.append(geom)
-        elif geom.geom_type == 'MultiPolygon':
-            parts.extend(geom.geoms)
-        else:
+        feature_parts = _polygonal_parts(geom)
+        if not feature_parts:
             skipped += 1
             continue
+        for poly in feature_parts:
+            if poly.is_valid:
+                parts.append(poly)
+            else:
+                parts.extend(_polygonal_parts(make_valid(poly)))
 
     # Exteriors CCW and holes CW so a winding fill paints overlap regions
     # solid while keeping holes empty.
