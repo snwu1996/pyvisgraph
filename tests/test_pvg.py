@@ -170,6 +170,7 @@ class TestClosestPoint:
         pid = self.g.point_in_polygon(self.point_d)
         cp = self.g.closest_point(self.point_d, pid, length=0.5)
         ip = intersect_point(self.point_d, cp, Edge(self.point_a, self.point_b))
+        assert ip is not None
         assert edge_distance(ip, cp) == 0.5
 
     def test_closest_point_edge_point(self):
@@ -236,6 +237,7 @@ class TestCollinear:
         s = Point(0, 0)
         t = Point(1.7, 1.7)
         shortest = g.shortest_path(s, t)
+        assert g.graph is not None
         visible = visible_vertices(t, g.graph, s, None)
         assert verts[3] not in visible
         assert verts[1] not in shortest

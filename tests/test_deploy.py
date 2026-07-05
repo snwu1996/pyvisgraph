@@ -36,6 +36,7 @@ class TestVisGraphBuild:
     def test_build_1_core(self):
         world = vg.VisGraph()
         world.build(self.polys)
+        assert world.graph is not None and world.visgraph is not None
         assert len(world.graph.get_points()) == 310
         assert len(world.graph.get_edges()) == 310
         assert len(world.visgraph.get_edges()) == 1156
@@ -47,6 +48,7 @@ class TestVisGraphBuild:
     def test_build_2_core(self):
         world = vg.VisGraph()
         world.build(self.polys, workers=2)
+        assert world.graph is not None and world.visgraph is not None
         assert len(world.graph.get_points()) == 310
         assert len(world.graph.get_edges()) == 310
         assert len(world.visgraph.get_edges()) == 1156
@@ -70,20 +72,24 @@ class TestVisGraphMethods:
 
     def test_shortest_path_not_update_visgraph(self):
         shortest = self.world.shortest_path(self.origin, self.destination)
+        assert self.world.visgraph is not None
         assert self.origin not in self.world.visgraph
         assert self.destination not in self.world.visgraph
 
     def test_shortest_path_not_update_graph(self):
         shortest = self.world.shortest_path(self.origin, self.destination)
+        assert self.world.graph is not None
         assert self.origin not in self.world.graph
         assert self.destination not in self.world.graph
 
     def test_update(self):
         self.world.update([self.origin, self.destination])
+        assert self.world.visgraph is not None
         assert self.origin in self.world.visgraph
         assert self.destination in self.world.visgraph
 
     def test_update_not_update_graph(self):
         self.world.update([self.origin, self.destination])
+        assert self.world.graph is not None
         assert self.origin not in self.world.graph
         assert self.destination not in self.world.graph

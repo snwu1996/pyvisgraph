@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import pyvisgraph as vg
-from haversine import haversine
+from haversine import haversine  # type: ignore[import-not-found]
 
 # In this example we will find the shortest path between two points on a
 # sphere, i.e. on earth. To calculate the total distance of that path, we

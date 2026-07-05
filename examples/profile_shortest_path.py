@@ -39,6 +39,7 @@ def random_free_points(g, bounds, n, rng):
 
 def time_query(g, origin, destination, algorithm):
     best = float('inf')
+    path = []
     for _ in range(REPEATS):
         start = time.perf_counter()
         path = g.shortest_path(origin, destination, algorithm=algorithm)
@@ -75,7 +76,8 @@ def main():
     for map_path in maps:
         result = load_polygons(map_path)
         g = VisGraph()
-        g.build(result.polygons, workers=os.cpu_count(), status=False)
+        g.build(result.polygons, workers=os.cpu_count() or 1, status=False)
+        assert g.graph is not None and g.visgraph is not None
         n_verts = len(g.graph.get_points())
         n_edges = len(g.visgraph.get_edges())
 

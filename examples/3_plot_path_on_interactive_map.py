@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import pyvisgraph as vg
-import folium
+import folium  # type: ignore[import-not-found]
 
 # In this example we will calculate the shortest path between two points
 # and plot this on a interactive map, using the folium package.
