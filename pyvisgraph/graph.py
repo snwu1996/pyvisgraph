@@ -116,6 +116,9 @@ class Graph:
         self.graph = defaultdict(set)
         self.edges = set()
         self.polygons = defaultdict(set)
+        # Per-polygon bounding boxes, filled lazily by visible_vertices.
+        self._polygon_bounds: dict[int, tuple[float, float, float, float]] \
+            | None = None
         pid = 0
         for polygon in polygons:
             if polygon[0] == polygon[-1] and len(polygon) > 1:

@@ -106,6 +106,8 @@ def shortest_path(graph: Graph, origin: Point, destination: Point,
     else:
         raise ValueError("unknown algorithm: {}".format(algorithm))
     path = []
+    if destination != origin and destination not in P:
+        return path  # destination is unreachable from origin
     while 1:
         path.append(destination)
         if destination == origin: break

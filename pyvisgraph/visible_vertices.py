@@ -141,15 +141,43 @@ def polygon_crossing(p1: Point, poly_edges: Iterable[Edge]):
     return True
 
 
+def _polygon_bounds(graph: Graph):
+    """Return {polygon_id: (minx, miny, maxx, maxy)}, cached on the graph.
+
+    Computed lazily (rather than in Graph.__init__) so graphs unpickled
+    from files saved before this cache existed keep working.
+    """
+    bounds = getattr(graph, '_polygon_bounds', None)
+    if bounds is None:
+        bounds = {}
+        for polygon_id, edges in graph.polygons.items():
+            xs = [x for edge in edges for x in (edge.p1.x, edge.p2.x)]
+            ys = [y for edge in edges for y in (edge.p1.y, edge.p2.y)]
+            bounds[polygon_id] = (min(xs), min(ys), max(xs), max(ys))
+        graph._polygon_bounds = bounds
+    return bounds
+
+
+def point_in_solid(p: Point, graph: Graph):
+    """Return True if p is in solid obstacle space, i.e. interior to an odd
+    number of polygons (even-odd rule). The hole ring of a donut-shaped
+    obstacle contains its courtyard twice, so the courtyard is free space."""
+    crossings = 0
+    for polygon_id, (minx, miny, maxx, maxy) in _polygon_bounds(graph).items():
+        if not (minx <= p.x <= maxx and miny <= p.y <= maxy):
+            continue
+        if polygon_crossing(p, graph.polygons[polygon_id]):
+            crossings += 1
+    return crossings % 2 == 1
+
+
 def edge_in_polygon(p1: Point, p2: Point, graph: Graph):
-    """Return true if the edge from p1 to p2 is interior to any polygon
-    in graph."""
-    if p1.polygon_id != p2.polygon_id:
-        return False
-    if p1.polygon_id == -1 or p2.polygon_id == -1:
-        return False
+    """Return true if the edge from p1 to p2 passes through solid obstacle
+    space, tested at the edge mid-point with the even-odd rule. Assumes the
+    edge does not cross any polygon edge (the sweep checks that), so the
+    mid-point decides the whole segment."""
     mid_point = Point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2)
-    return polygon_crossing(mid_point, graph.polygons[p1.polygon_id])
+    return point_in_solid(mid_point, graph)
 
 
 def point_in_polygon(p: Point, graph: Graph):

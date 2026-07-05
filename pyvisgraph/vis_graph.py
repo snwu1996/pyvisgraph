@@ -29,7 +29,8 @@ from tqdm import tqdm
 
 from pyvisgraph.graph import Graph, Edge, Point
 from pyvisgraph.shortest_path import shortest_path
-from pyvisgraph.visible_vertices import visible_vertices, point_in_polygon
+from pyvisgraph.visible_vertices import (visible_vertices, point_in_polygon,
+                                         point_in_solid)
 from pyvisgraph.visible_vertices import closest_point
 
 
@@ -112,7 +113,8 @@ class VisGraph:
         visibility edges will be found, but only kept temporarily for finding
         the shortest path.
         Searches with A* by default; pass algorithm='dijkstra' for the
-        original Dijkstra search. Both return an optimal path.
+        original Dijkstra search. Both return an optimal path. Returns an
+        empty list when no path exists between origin and destination.
         """
 
         assert self.graph is not None and self.visgraph is not None, \
@@ -139,6 +141,17 @@ class VisGraph:
 
         assert self.graph is not None, 'call build() or load() first'
         return point_in_polygon(point, self.graph)
+
+    def point_in_solid(self, point: Point):
+        """Return True if point is in solid obstacle space (even-odd rule).
+
+        A point interior to an odd number of polygons is solid; the hole of
+        a donut-shaped obstacle counts twice and is therefore free space,
+        unlike point_in_polygon which reports it as inside the outer ring.
+        """
+
+        assert self.graph is not None, 'call build() or load() first'
+        return point_in_solid(point, self.graph)
 
     def closest_point(self, point: Point, polygon_id: int,
                       length: float = 0.001):

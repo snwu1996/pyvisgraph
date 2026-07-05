@@ -25,6 +25,7 @@ from pyvisgraph.graph import Graph, Point, Edge
 from pyvisgraph.visible_vertices import edge_intersect, point_edge_distance
 from pyvisgraph.visible_vertices import visible_vertices, angle, point_in_polygon
 from pyvisgraph.visible_vertices import intersect_point, edge_distance
+from pyvisgraph.shortest_path import shortest_path as graph_shortest_path
 from math import pi, degrees, cos, sin
 import pyvisgraph as vg
 
@@ -334,6 +335,44 @@ class TestShortestPaths:
             assert False
         except ValueError:
             pass
+
+    def test_unreachable_destination_returns_empty_path(self):
+        # Two disconnected components: no path exists between them.
+        g = Graph([[Point(0, 0), Point(1, 0), Point(0, 1)],
+                   [Point(5, 5), Point(6, 5), Point(5, 6)]])
+        for algorithm in ('astar', 'dijkstra'):
+            assert graph_shortest_path(g, Point(0, 0), Point(5, 5),
+                                       algorithm=algorithm) == []
+            assert graph_shortest_path(g, Point(5, 5), Point(0, 0),
+                                       algorithm=algorithm) == []
+
+    def test_donut_courtyard_paths(self):
+        # A donut-shaped obstacle: outer ring plus its hole ring as a
+        # second polygon (as the viewer's loader produces for holes). The
+        # courtyard is free space: points inside it can reach each other,
+        # but never the outside.
+        donut = [[Point(0, 0), Point(10, 0), Point(10, 10), Point(0, 10)],
+                 [Point(2, 2), Point(8, 2), Point(8, 8), Point(2, 8)]]
+        g = vg.VisGraph()
+        g.build(donut, status=False)
+        assert g.point_in_solid(Point(1, 5))       # in the ring wall
+        assert not g.point_in_solid(Point(5, 5))   # in the courtyard
+        assert not g.point_in_solid(Point(12, 5))  # outside
+        # within the courtyard
+        path = g.shortest_path(Point(3, 3), Point(7, 7))
+        assert len(path) >= 2
+        assert path[0] == Point(3, 3) and path[-1] == Point(7, 7)
+        for p1, p2 in zip(path, path[1:]):
+            assert not g.point_in_solid(Point((p1.x + p2.x) / 2,
+                                              (p1.y + p2.y) / 2))
+        # courtyard <-> outside is sealed
+        for algorithm in ('astar', 'dijkstra'):
+            assert g.shortest_path(Point(5, 5), Point(12, 5),
+                                   algorithm=algorithm) == []
+            assert g.shortest_path(Point(12, 5), Point(5, 5),
+                                   algorithm=algorithm) == []
+        # a point in the solid ring wall cannot reach anywhere
+        assert g.shortest_path(Point(1, 5), Point(12, 5)) == []
 
     def test_astar_regular_polygon(self):
         r, n, c = 0.2, 4, Point(1.0, 1.0)
