@@ -6,7 +6,7 @@ are not reprojected, which is fine for small extents since pyvisgraph's
 math is Euclidean anyway.
 """
 from dataclasses import dataclass
-from typing import List, Optional, Tuple
+from typing import Iterable, List, Optional, Sequence, Tuple
 
 import geopandas as gpd
 
@@ -20,7 +20,7 @@ class LoadResult:
     skipped: int  # non-polygonal geometries that were ignored
 
 
-def _ring_to_points(coords) -> Optional[List[Point]]:
+def _ring_to_points(coords: Iterable[Sequence[float]]) -> Optional[List[Point]]:
     """Convert a shapely ring coordinate sequence to a list of Points.
 
     Drops the duplicate closing coordinate and consecutive duplicates.

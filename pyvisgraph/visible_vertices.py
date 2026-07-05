@@ -21,8 +21,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from __future__ import annotations
+
 from math import pi, sqrt, atan, acos
-from pyvisgraph.graph import Point
+from typing import Iterable
+
+from pyvisgraph.graph import Edge, Graph, Point
 
 INF = 10000
 CCW = 1
@@ -34,7 +38,8 @@ COLIN_TOLERANCE = 10
 T = 10**COLIN_TOLERANCE
 T2 = 10.0**COLIN_TOLERANCE
 
-def visible_vertices(point, graph, origin=None, destination=None, scan='full'):
+def visible_vertices(point: Point, graph: Graph, origin: Point | None = None,
+                     destination: Point | None = None, scan: str = 'full'):
     """Returns list of Points in graph visible by point.
 
     If origin and/or destination Points are given, these will also be checked
@@ -111,7 +116,7 @@ def visible_vertices(point, graph, origin=None, destination=None, scan='full'):
     return visible
 
 
-def polygon_crossing(p1, poly_edges):
+def polygon_crossing(p1: Point, poly_edges: Iterable[Edge]):
     """Returns True if Point p1 is internal to the polygon. The polygon is
     defined by the Edges in poly_edges. Uses crossings algorithm and takes into
     account edges that are collinear to p1."""
@@ -136,7 +141,7 @@ def polygon_crossing(p1, poly_edges):
     return True
 
 
-def edge_in_polygon(p1, p2, graph):
+def edge_in_polygon(p1: Point, p2: Point, graph: Graph):
     """Return true if the edge from p1 to p2 is interior to any polygon
     in graph."""
     if p1.polygon_id != p2.polygon_id:
@@ -147,7 +152,7 @@ def edge_in_polygon(p1, p2, graph):
     return polygon_crossing(mid_point, graph.polygons[p1.polygon_id])
 
 
-def point_in_polygon(p, graph):
+def point_in_polygon(p: Point, graph: Graph):
     """Return true if the point p is interior to any polygon in graph."""
     for polygon in graph.polygons:
         if polygon_crossing(p, graph.polygons[polygon]):
@@ -155,12 +160,13 @@ def point_in_polygon(p, graph):
     return -1
 
 
-def unit_vector(c, p):
+def unit_vector(c: Point, p: Point):
     magnitude = edge_distance(c, p)
     return Point((p.x - c.x) / magnitude, (p.y - c.y) / magnitude)
 
 
-def closest_point(p, graph, polygon_id, length=0.001):
+def closest_point(p: Point, graph: Graph, polygon_id: int,
+                  length: float = 0.001):
     """Assumes p is interior to the polygon with polygon_id. Returns the
     closest point c outside the polygon to p, where the distance from c to
     the intersect point from p to the edge of the polygon is length."""
@@ -203,12 +209,12 @@ def closest_point(p, graph, polygon_id, length=0.001):
         return Point(close_point.x + v.x*length, close_point.y + v.y*length)
 
 
-def edge_distance(p1, p2):
+def edge_distance(p1: Point, p2: Point):
     """Return the Euclidean distance between two Points."""
     return sqrt((p2.x - p1.x)**2 + (p2.y - p1.y)**2)
 
 
-def intersect_point(p1, p2, edge):
+def intersect_point(p1: Point, p2: Point, edge: Edge):
     """Return intersect Point where the edge from p1, p2 intersects edge"""
     if p1 in edge: return p1
     if p2 in edge: return p2
@@ -235,7 +241,7 @@ def intersect_point(p1, p2, edge):
     return Point(intersect_x, intersect_y)
 
 
-def point_edge_distance(p1, p2, edge):
+def point_edge_distance(p1: Point, p2: Point, edge: Edge):
     """Return the Eucledian distance from p1 to intersect point with edge.
     Assumes the line going from p1 to p2 intersects edge before reaching p2."""
     ip = intersect_point(p1, p2, edge)
@@ -244,7 +250,7 @@ def point_edge_distance(p1, p2, edge):
     return 0
 
 
-def angle(center, point):
+def angle(center: Point, point: Point):
     """Return the angle (radian) of point from center of the radian circle.
      ------p
      |   /
@@ -268,7 +274,7 @@ def angle(center, point):
     return atan(dy / dx)
 
 
-def angle2(point_a, point_b, point_c):
+def angle2(point_a: Point, point_b: Point, point_c: Point):
     """Return angle B (radian) between point_b and point_c.
            c
          /  \
@@ -282,7 +288,7 @@ def angle2(point_a, point_b, point_c):
     return acos(int(cos_value*T)/T2)
 
 
-def ccw(A, B, C):
+def ccw(A: Point, B: Point, C: Point):
     """Return 1 if counter clockwise, -1 if clock wise, 0 if collinear """
     #  Rounding this way is faster than calling round()
     area = int(((B.x - A.x) * (C.y - A.y) - (B.y - A.y) * (C.x - A.x))*T)/T2
@@ -291,7 +297,7 @@ def ccw(A, B, C):
     return 0
 
 
-def on_segment(p, q, r):
+def on_segment(p: Point, q: Point, r: Point):
     """Given three colinear points p, q, r, the function checks if point q
     lies on line segment 'pr'."""
     if (q.x <= max(p.x, r.x)) and (q.x >= min(p.x, r.x)):
@@ -300,7 +306,7 @@ def on_segment(p, q, r):
     return False
 
 
-def edge_intersect(p1, q1, edge):
+def edge_intersect(p1: Point, q1: Point, edge: Edge):
     """Return True if edge from A, B interects edge.
     http://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/"""
     p2 = edge.p1
@@ -332,10 +338,10 @@ class OpenEdges:
     def __init__(self):
         self._open_edges = []
 
-    def insert(self, p1, p2, edge):
+    def insert(self, p1: Point, p2: Point, edge: Edge):
         self._open_edges.insert(self._index(p1, p2, edge), edge)
 
-    def delete(self, p1, p2, edge):
+    def delete(self, p1: Point, p2: Point, edge: Edge):
         index = self._index(p1, p2, edge) - 1
         if self._open_edges[index] == edge:
             del self._open_edges[index]
@@ -343,7 +349,7 @@ class OpenEdges:
     def smallest(self):
         return self._open_edges[0]
 
-    def _less_than(self, p1, p2, edge1, edge2):
+    def _less_than(self, p1: Point, p2: Point, edge1: Edge, edge2: Edge):
         """Return True if edge1 is smaller than edge2, False otherwise."""
         if edge1 == edge2:
             return False
@@ -367,7 +373,7 @@ class OpenEdges:
                 return True
             return False
 
-    def _index(self, p1, p2, edge):
+    def _index(self, p1: Point, p2: Point, edge: Edge):
         lo = 0
         hi = len(self._open_edges)
         while lo < hi:
@@ -381,5 +387,5 @@ class OpenEdges:
     def __len__(self):
         return len(self._open_edges)
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int):
         return self._open_edges[index]

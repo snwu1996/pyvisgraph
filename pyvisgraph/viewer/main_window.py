@@ -1,9 +1,11 @@
 """Main window wiring the loader, build worker, scene and interaction."""
+from __future__ import annotations
+
 import math
 import os
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QAction, QKeySequence
+from PyQt6.QtGui import QAction, QKeySequence, QShowEvent
 from PyQt6.QtWidgets import (QFileDialog, QMainWindow, QMessageBox,
                              QProgressBar)
 
@@ -21,7 +23,8 @@ CLICK_HINT = 'click to set start, click again to set end'
 
 class MainWindow(QMainWindow):
 
-    def __init__(self, path, workers=1, layer=None):
+    def __init__(self, path: str, workers: int = 1,
+                 layer: str | None = None):
         super().__init__()
         self.resize(1000, 750)
 
@@ -70,7 +73,7 @@ class MainWindow(QMainWindow):
 
         self.load_file(path, layer=layer)
 
-    def load_file(self, path, layer=None):
+    def load_file(self, path: str, layer: str | None = None):
         """Load a geometry file and start building its visibility graph.
 
         Raises on unreadable/polygon-free files, leaving the current
@@ -119,7 +122,7 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, 'Load failed',
                                  'Could not load {}:\n{}'.format(path, e))
 
-    def showEvent(self, event):
+    def showEvent(self, event: QShowEvent):
         super().showEvent(event)
         # fitInView needs the viewport at its final size, which it only has
         # once the window is shown.
@@ -127,7 +130,7 @@ class MainWindow(QMainWindow):
             self._fitted = True
             self.view.fit_bounds(*self._bounds)
 
-    def on_build_finished(self, graph):
+    def on_build_finished(self, graph: vg.VisGraph):
         if self.sender() is not self.worker:
             return  # stale result from a build superseded by File > Open
         self.visgraph = graph
@@ -138,14 +141,14 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage(
             'Ready ({} visibility edges) - {}'.format(len(edges), CLICK_HINT))
 
-    def on_build_failed(self, message):
+    def on_build_failed(self, message: str):
         if self.sender() is not self.worker:
             return
         self.busy_bar.hide()
         self.statusBar().showMessage(
             'Failed to build visibility graph: {}'.format(message))
 
-    def on_point_clicked(self, x, y, button):
+    def on_point_clicked(self, x: float, y: float, button: Qt.MouseButton):
         if self.visgraph is None or button != Qt.MouseButton.LeftButton:
             return
         point, note = self._snap_outside(vg.Point(x, y))
@@ -161,7 +164,7 @@ class MainWindow(QMainWindow):
             self.scene.set_end(point)
         self.update_path(note)
 
-    def _snap_outside(self, point):
+    def _snap_outside(self, point: vg.Point):
         """Move a point that lands inside an obstacle just outside of it."""
         polygon_id = self.visgraph.point_in_polygon(point)
         if polygon_id < 0:
@@ -178,7 +181,7 @@ class MainWindow(QMainWindow):
         if self.visgraph is not None:
             self.statusBar().showMessage('Points cleared - ' + CLICK_HINT)
 
-    def update_path(self, note=''):
+    def update_path(self, note: str = ''):
         if self.end is None:
             self.statusBar().showMessage(
                 'Start set - click again to set end' + note)

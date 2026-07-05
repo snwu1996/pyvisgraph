@@ -21,12 +21,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from __future__ import annotations
+
 from heapq import heapify, heappush, heappop
 from itertools import count
+
+from pyvisgraph.graph import Graph, Point
 from pyvisgraph.visible_vertices import edge_distance
 
 
-def astar(graph, origin, destination, add_to_visgraph):
+def astar(graph: Graph, origin: Point, destination: Point,
+          add_to_visgraph: Graph | None):
     """A* search from origin to destination.
 
     Uses the Euclidean distance to the destination as heuristic, which is
@@ -65,7 +70,8 @@ def astar(graph, origin, destination, add_to_visgraph):
     return (D, P)
 
 
-def dijkstra(graph, origin, destination, add_to_visgraph):
+def dijkstra(graph: Graph, origin: Point, destination: Point,
+             add_to_visgraph: Graph | None):
     D = {}
     P = {}
     Q = priority_dict()
@@ -90,8 +96,9 @@ def dijkstra(graph, origin, destination, add_to_visgraph):
     return (D, P)
 
 
-def shortest_path(graph, origin, destination, add_to_visgraph=None,
-                  algorithm='astar'):
+def shortest_path(graph: Graph, origin: Point, destination: Point,
+                  add_to_visgraph: Graph | None = None,
+                  algorithm: str = 'astar'):
     if algorithm == 'astar':
         D, P = astar(graph, origin, destination, add_to_visgraph)
     elif algorithm == 'dijkstra':
@@ -145,7 +152,7 @@ class priority_dict(dict):
         del self[k]
         return k
 
-    def __setitem__(self, key, val):
+    def __setitem__(self, key: object, val: object):
         super().__setitem__(key, val)
 
         if len(self._heap) < 2 * len(self):
@@ -153,7 +160,7 @@ class priority_dict(dict):
         else:
             self._rebuild_heap()
 
-    def setdefault(self, key, val):
+    def setdefault(self, key: object, val: object):
         if key not in self:
             self[key] = val
             return val

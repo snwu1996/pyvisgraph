@@ -1,8 +1,14 @@
 """Graphics scene holding the obstacle map, visibility graph and path layers."""
-from PyQt6.QtCore import QPointF, Qt
+from __future__ import annotations
+
+from typing import Iterable
+
+from PyQt6.QtCore import QObject, QPointF, Qt
 from PyQt6.QtGui import QBrush, QColor, QPainterPath, QPen, QPolygonF
 from PyQt6.QtWidgets import (QGraphicsEllipseItem, QGraphicsItem,
                              QGraphicsPathItem, QGraphicsScene)
+
+import pyvisgraph as vg
 
 VIS_EDGE_COLOR = QColor('#d3d3d3')
 POLYGON_EDGE_COLOR = QColor('#000000')
@@ -14,13 +20,13 @@ END_COLOR = QColor('#8b0000')
 MARKER_RADIUS = 5  # pixels; markers ignore view transforms
 
 
-def _cosmetic_pen(color, width):
+def _cosmetic_pen(color: QColor, width: float):
     pen = QPen(color, width)
     pen.setCosmetic(True)
     return pen
 
 
-def _marker(color):
+def _marker(color: QColor):
     # Centered on its position and unaffected by zoom or the view's y-flip.
     item = QGraphicsEllipseItem(-MARKER_RADIUS, -MARKER_RADIUS,
                                 2 * MARKER_RADIUS, 2 * MARKER_RADIUS)
@@ -37,7 +43,7 @@ class VisGraphScene(QGraphicsScene):
     so the scene stays responsive on dense graphs.
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QObject | None = None):
         super().__init__(parent)
         self.setBackgroundBrush(QBrush(QColor('#ffffff')))
 
@@ -66,7 +72,7 @@ class VisGraphScene(QGraphicsScene):
                      self.start_item, self.end_item):
             self.addItem(item)
 
-    def set_polygons(self, polygons):
+    def set_polygons(self, polygons: list[list[vg.Point]]):
         """polygons: list of list of vg.Point (open rings)."""
         path = QPainterPath()
         path.setFillRule(Qt.FillRule.OddEvenFill)
@@ -75,7 +81,7 @@ class VisGraphScene(QGraphicsScene):
             path.closeSubpath()
         self.polygons_item.setPath(path)
 
-    def set_vis_edges(self, edges):
+    def set_vis_edges(self, edges: Iterable[vg.Edge]):
         """edges: iterable of vg.Edge."""
         path = QPainterPath()
         for edge in edges:
@@ -83,10 +89,10 @@ class VisGraphScene(QGraphicsScene):
             path.lineTo(edge.p2.x, edge.p2.y)
         self.vis_edges_item.setPath(path)
 
-    def set_vis_edges_visible(self, visible):
+    def set_vis_edges_visible(self, visible: bool):
         self.vis_edges_item.setVisible(visible)
 
-    def set_path(self, points):
+    def set_path(self, points: list[vg.Point] | None):
         """points: in-order list of vg.Point, or None to clear."""
         path = QPainterPath()
         if points:
@@ -95,14 +101,14 @@ class VisGraphScene(QGraphicsScene):
                 path.lineTo(p.x, p.y)
         self.path_item.setPath(path)
 
-    def set_start(self, point):
+    def set_start(self, point: vg.Point | None):
         self._place_marker(self.start_item, point)
 
-    def set_end(self, point):
+    def set_end(self, point: vg.Point | None):
         self._place_marker(self.end_item, point)
 
     @staticmethod
-    def _place_marker(item, point):
+    def _place_marker(item: QGraphicsEllipseItem, point: vg.Point | None):
         if point is None:
             item.setVisible(False)
         else:

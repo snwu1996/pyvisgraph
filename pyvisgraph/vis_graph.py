@@ -21,11 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from __future__ import annotations
+
 import pickle
 from multiprocessing import Pool
 from tqdm import tqdm
 
-from pyvisgraph.graph import Graph, Edge
+from pyvisgraph.graph import Graph, Edge, Point
 from pyvisgraph.shortest_path import shortest_path
 from pyvisgraph.visible_vertices import visible_vertices, point_in_polygon
 from pyvisgraph.visible_vertices import closest_point
@@ -37,17 +39,18 @@ class VisGraph:
         self.graph = None
         self.visgraph = None
 
-    def load(self, filename):
+    def load(self, filename: str):
         """Load obstacle graph and visibility graph. """
         with open(filename, 'rb') as load:
             self.graph, self.visgraph = pickle.load(load)
 
-    def save(self, filename):
+    def save(self, filename: str):
         """Save obstacle graph and visibility graph. """
         with open(filename, 'wb') as output:
             pickle.dump((self.graph, self.visgraph), output, -1)
 
-    def build(self, input, workers=1, status=True): 
+    def build(self, input: list[list[Point]], workers: int = 1,
+              status: bool = True):
         """Build visibility graph based on a list of polygons.
 
         The input must be a list of polygons, where each polygon is a list of
@@ -83,12 +86,13 @@ class VisGraph:
                 for edge in result:
                     self.visgraph.add_edge(edge)
 
-    def find_visible(self, point):
+    def find_visible(self, point: Point):
         """Find vertices visible from point."""
 
         return visible_vertices(point, self.graph)
 
-    def update(self, points, origin=None, destination=None):
+    def update(self, points: list[Point], origin: Point | None = None,
+               destination: Point | None = None):
         """Update visgraph by checking visibility of Points in list points."""
 
         for p in points:
@@ -96,7 +100,8 @@ class VisGraph:
                                       destination=destination):
                 self.visgraph.add_edge(Edge(p, v))
 
-    def shortest_path(self, origin, destination, algorithm='astar'):
+    def shortest_path(self, origin: Point, destination: Point,
+                      algorithm: str = 'astar'):
         """Find and return shortest path between origin and destination.
 
         Will return in-order list of Points of the shortest path found. If
@@ -124,12 +129,13 @@ class VisGraph:
         return shortest_path(self.visgraph, origin, destination, add_to_visg,
                              algorithm=algorithm)
 
-    def point_in_polygon(self, point):
+    def point_in_polygon(self, point: Point):
         """Return polygon_id if point in a polygon, -1 otherwise."""
 
         return point_in_polygon(point, self.graph)
 
-    def closest_point(self, point, polygon_id, length=0.001):
+    def closest_point(self, point: Point, polygon_id: int,
+                      length: float = 0.001):
         """Return closest Point outside polygon from point.
 
         Note method assumes point is inside the polygon, no check is
@@ -139,13 +145,13 @@ class VisGraph:
         return closest_point(point, self.graph, polygon_id, length)
 
 
-def _vis_graph_wrapper(args):
+def _vis_graph_wrapper(args: tuple[Graph, list[Point]]):
     try:
         return _vis_graph(*args)
     except KeyboardInterrupt:
         pass
 
-def _vis_graph(graph, points):
+def _vis_graph(graph: Graph, points: list[Point]):
     visible_edges = []
     for p1 in points:
         for p2 in visible_vertices(p1, graph, scan='half'):

@@ -1,5 +1,7 @@
 """Background thread for the blocking VisGraph.build call."""
-from PyQt6.QtCore import QThread, pyqtSignal
+from __future__ import annotations
+
+from PyQt6.QtCore import QObject, QThread, pyqtSignal
 
 import pyvisgraph as vg
 
@@ -14,7 +16,8 @@ class BuildWorker(QThread):
     finished_ok = pyqtSignal(object)  # the built vg.VisGraph
     failed = pyqtSignal(str)
 
-    def __init__(self, polygons, workers=1, parent=None):
+    def __init__(self, polygons: list[list[vg.Point]], workers: int = 1,
+                 parent: QObject | None = None):
         super().__init__(parent)
         self._polygons = polygons
         self._workers = workers

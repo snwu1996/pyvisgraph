@@ -1,15 +1,22 @@
 """Command line entry point for pyvisgraph-viewer.
 
 The heavy optional dependencies (geopandas, PyQt6) are imported lazily so
-this module can print a helpful install hint when the 'viewer' extras are
+this module can log a helpful install hint when the 'viewer' extras are
 missing.
 """
+from __future__ import annotations
+
 import argparse
+import logging
 import os
 import sys
 
+logger = logging.getLogger(__name__)
 
-def main(argv=None):
+
+def main(argv: list[str] | None = None) -> int:
+    logging.basicConfig(format='%(levelname)s: %(message)s',
+                        level=logging.INFO)
     parser = argparse.ArgumentParser(
         prog='pyvisgraph-viewer',
         description='Interactive viewer: load polygons from any '
@@ -29,14 +36,13 @@ def main(argv=None):
         import geopandas  # noqa: F401
         from PyQt6.QtWidgets import QApplication
     except ImportError as e:
-        print("pyvisgraph-viewer requires the 'viewer' extras "
-              "('{}' is missing).\n"
-              'Install with: pip install pyvisgraph[viewer]'.format(e.name),
-              file=sys.stderr)
+        logger.error("pyvisgraph-viewer requires the 'viewer' extras "
+                     "('%s' is missing).\n"
+                     'Install with: pip install pyvisgraph[viewer]', e.name)
         return 1
 
     if not os.path.isfile(args.file):
-        print('File not found: {}'.format(args.file), file=sys.stderr)
+        logger.error('File not found: %s', args.file)
         return 1
 
     from pyvisgraph.viewer.main_window import MainWindow
@@ -45,7 +51,7 @@ def main(argv=None):
     try:
         window = MainWindow(args.file, workers=args.workers, layer=args.layer)
     except Exception as e:
-        print('Could not load {}: {}'.format(args.file, e), file=sys.stderr)
+        logger.error('Could not load %s: %s', args.file, e)
         return 1
     window.show()
     return app.exec()
