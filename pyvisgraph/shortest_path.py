@@ -22,7 +22,47 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from heapq import heapify, heappush, heappop
+from itertools import count
 from pyvisgraph.visible_vertices import edge_distance
+
+
+def astar(graph, origin, destination, add_to_visgraph):
+    """A* search from origin to destination.
+
+    Uses the Euclidean distance to the destination as heuristic, which is
+    admissible and consistent on a visibility graph with Euclidean edge
+    weights, so the result is the same optimal path Dijkstra finds while
+    settling fewer nodes. Returns (D, P) with the same meaning as dijkstra:
+    D maps settled points to their cost from origin, P maps points to their
+    predecessor on the shortest path.
+    """
+    D = {}
+    P = {}
+    G = {origin: 0}
+    tiebreak = count()
+    open_heap = [(edge_distance(origin, destination), next(tiebreak), origin)]
+
+    while open_heap:
+        f, _, v = heappop(open_heap)
+        if v in D:
+            continue
+        D[v] = G[v]
+        if v == destination: break
+
+        edges = graph[v]
+        if add_to_visgraph != None and len(add_to_visgraph[v]) > 0:
+            edges = add_to_visgraph[v] | graph[v]
+        for e in edges:
+            w = e.get_adjacent(v)
+            if w in D:
+                continue
+            elength = D[v] + edge_distance(v, w)
+            if w not in G or elength < G[w]:
+                G[w] = elength
+                P[w] = v
+                heappush(open_heap, (elength + edge_distance(w, destination),
+                                     next(tiebreak), w))
+    return (D, P)
 
 
 def dijkstra(graph, origin, destination, add_to_visgraph):
@@ -50,8 +90,14 @@ def dijkstra(graph, origin, destination, add_to_visgraph):
     return (D, P)
 
 
-def shortest_path(graph, origin, destination, add_to_visgraph=None):
-    D, P = dijkstra(graph, origin, destination, add_to_visgraph)
+def shortest_path(graph, origin, destination, add_to_visgraph=None,
+                  algorithm='astar'):
+    if algorithm == 'astar':
+        D, P = astar(graph, origin, destination, add_to_visgraph)
+    elif algorithm == 'dijkstra':
+        D, P = dijkstra(graph, origin, destination, add_to_visgraph)
+    else:
+        raise ValueError("unknown algorithm: {}".format(algorithm))
     path = []
     while 1:
         path.append(destination)

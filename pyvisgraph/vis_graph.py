@@ -96,19 +96,22 @@ class VisGraph:
                                       destination=destination):
                 self.visgraph.add_edge(Edge(p, v))
 
-    def shortest_path(self, origin, destination):
+    def shortest_path(self, origin, destination, algorithm='astar'):
         """Find and return shortest path between origin and destination.
 
         Will return in-order list of Points of the shortest path found. If
         origin or destination are not in the visibility graph, their respective
         visibility edges will be found, but only kept temporarily for finding
-        the shortest path. 
+        the shortest path.
+        Searches with A* by default; pass algorithm='dijkstra' for the
+        original Dijkstra search. Both return an optimal path.
         """
 
         origin_exists = origin in self.visgraph
         dest_exists = destination in self.visgraph
         if origin_exists and dest_exists:
-            return shortest_path(self.visgraph, origin, destination)
+            return shortest_path(self.visgraph, origin, destination,
+                                 algorithm=algorithm)
         orgn = None if origin_exists else origin
         dest = None if dest_exists else destination
         add_to_visg = Graph([])
@@ -118,7 +121,8 @@ class VisGraph:
         if not dest_exists:
             for v in visible_vertices(destination, self.graph, origin=orgn):
                 add_to_visg.add_edge(Edge(destination, v))
-        return shortest_path(self.visgraph, origin, destination, add_to_visg)
+        return shortest_path(self.visgraph, origin, destination, add_to_visg,
+                             algorithm=algorithm)
 
     def point_in_polygon(self, point):
         """Return polygon_id if point in a polygon, -1 otherwise."""

@@ -285,3 +285,66 @@ class TestCollinear:
                         Point(1,1), Point(1,2), Point(0,2)]])
         pip = point_in_polygon(Point(0.5,1), graph)
         assert pip > -1
+
+def path_length(path):
+    return sum(edge_distance(u, w) for u, w in zip(path[:-1], path[1:]))
+
+
+class TestShortestPaths:
+
+    def setup_method(self, method):
+        self.polys = [[Point(1, 1), Point(3, 1), Point(3, 3), Point(1, 3)],
+                      [Point(4, 2), Point(6, 2), Point(5, 4)],
+                      [Point(2, 5), Point(4, 5), Point(4, 7), Point(2, 7)]]
+        self.g = vg.VisGraph()
+        self.g.build(self.polys, status=False)
+
+    def test_astar_matches_dijkstra(self):
+        pairs = [(Point(0, 0), Point(7, 7)),
+                 (Point(0, 4), Point(7, 1)),
+                 (Point(0, 8), Point(7, 0))]
+        for origin, destination in pairs:
+            astar_path = self.g.shortest_path(origin, destination)
+            dijkstra_path = self.g.shortest_path(origin, destination,
+                                                 algorithm='dijkstra')
+            assert astar_path == dijkstra_path
+            assert abs(path_length(astar_path)
+                       - path_length(dijkstra_path)) < 1e-12
+
+    def test_astar_is_default(self):
+        origin, destination = Point(0, 0), Point(7, 7)
+        default_path = self.g.shortest_path(origin, destination)
+        astar_path = self.g.shortest_path(origin, destination,
+                                          algorithm='astar')
+        assert default_path == astar_path
+
+    def test_astar_with_graph_vertices(self):
+        # Origin/destination already in the visgraph, so no add_to_visgraph.
+        origin, destination = Point(1, 1), Point(4, 7)
+        astar_path = self.g.shortest_path(origin, destination)
+        dijkstra_path = self.g.shortest_path(origin, destination,
+                                             algorithm='dijkstra')
+        assert astar_path == dijkstra_path
+
+    def test_unknown_algorithm_raises(self):
+        try:
+            self.g.shortest_path(Point(0, 0), Point(7, 7), algorithm='bfs')
+            assert False
+        except ValueError:
+            pass
+
+    def test_astar_regular_polygon(self):
+        r, n, c = 0.2, 4, Point(1.0, 1.0)
+        verts = [Point(r * cos(2*pi * i/n - pi/4) + c.x,
+                       r * sin(2*pi * i/n - pi/4) + c.y) for i in range(n)]
+        g = vg.VisGraph()
+        g.build([verts], status=False)
+        s, t = Point(0, 0), Point(1.7, 1.7)
+        astar_path = g.shortest_path(s, t)
+        dijkstra_path = g.shortest_path(s, t, algorithm='dijkstra')
+        # The obstacle is symmetric so two optimal paths tie; the algorithms
+        # may break the tie differently, but the lengths must match.
+        assert abs(path_length(astar_path)
+                   - path_length(dijkstra_path)) < 1e-12
+        assert verts[1] not in astar_path
+        assert verts[3] not in astar_path
