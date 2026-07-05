@@ -171,12 +171,12 @@ def closest_point(p: Point, graph: Graph, polygon_id: int,
     closest point c outside the polygon to p, where the distance from c to
     the intersect point from p to the edge of the polygon is length."""
     polygon_edges = graph.polygons[polygon_id]
-    close_point = None
-    close_edge = None
-    close_dist = None
+    close_point: Point | None = None
+    close_edge: Edge | None = None
+    close_dist = float('inf')
     # Finds point closest to p, but on a edge of the polygon.
     # Solution from http://stackoverflow.com/a/6177788/4896361
-    for i, e in enumerate(polygon_edges):
+    for e in polygon_edges:
         num = ((p.x-e.p1.x)*(e.p2.x-e.p1.x) + (p.y-e.p1.y)*(e.p2.y-e.p1.y))
         denom = ((e.p2.x - e.p1.x)**2 + (e.p2.y - e.p1.y)**2)
         u = num/denom
@@ -187,10 +187,12 @@ def closest_point(p: Point, graph: Graph, polygon_id: int,
         elif u > 1:
             pc = e.p2
         d = edge_distance(p, pc)
-        if i == 0 or d < close_dist:
+        if d < close_dist:
             close_dist = d
             close_point = pc
             close_edge = e
+    assert close_point is not None and close_edge is not None, \
+        'polygon has no edges'
 
     # Extend the newly found point so it is outside the polygon by `length`.
     if close_point in close_edge:

@@ -34,8 +34,9 @@ class Point:
         self.y = float(y)
         self.polygon_id = polygon_id
 
-    def __eq__(self, point: object):
-        return point and self.x == point.x and self.y == point.y
+    def __eq__(self, point: object) -> bool:
+        return (isinstance(point, Point)
+                and self.x == point.x and self.y == point.y)
 
     def __ne__(self, point: object):
         return not self.__eq__(point)
@@ -72,7 +73,9 @@ class Edge:
     def __contains__(self, point: Point):
         return self.p1 == point or self.p2 == point
 
-    def __eq__(self, edge: object):
+    def __eq__(self, edge: object) -> bool:
+        if not isinstance(edge, Edge):
+            return False
         if self.p1 == edge.p1 and self.p2 == edge.p2:
             return True
         if self.p1 == edge.p2 and self.p2 == edge.p1:

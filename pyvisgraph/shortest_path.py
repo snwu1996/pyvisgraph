@@ -160,7 +160,7 @@ class priority_dict(dict):
         else:
             self._rebuild_heap()
 
-    def setdefault(self, key: object, val: object):
+    def setdefault(self, key: object, val: object = None):
         if key not in self:
             self[key] = val
             return val

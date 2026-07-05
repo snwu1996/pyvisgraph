@@ -36,8 +36,8 @@ from pyvisgraph.visible_vertices import closest_point
 class VisGraph:
 
     def __init__(self):
-        self.graph = None
-        self.visgraph = None
+        self.graph: Graph | None = None
+        self.visgraph: Graph | None = None
 
     def load(self, filename: str):
         """Load obstacle graph and visibility graph. """
@@ -89,12 +89,15 @@ class VisGraph:
     def find_visible(self, point: Point):
         """Find vertices visible from point."""
 
+        assert self.graph is not None, 'call build() or load() first'
         return visible_vertices(point, self.graph)
 
     def update(self, points: list[Point], origin: Point | None = None,
                destination: Point | None = None):
         """Update visgraph by checking visibility of Points in list points."""
 
+        assert self.graph is not None and self.visgraph is not None, \
+            'call build() or load() first'
         for p in points:
             for v in visible_vertices(p, self.graph, origin=origin,
                                       destination=destination):
@@ -112,6 +115,8 @@ class VisGraph:
         original Dijkstra search. Both return an optimal path.
         """
 
+        assert self.graph is not None and self.visgraph is not None, \
+            'call build() or load() first'
         origin_exists = origin in self.visgraph
         dest_exists = destination in self.visgraph
         if origin_exists and dest_exists:
@@ -132,6 +137,7 @@ class VisGraph:
     def point_in_polygon(self, point: Point):
         """Return polygon_id if point in a polygon, -1 otherwise."""
 
+        assert self.graph is not None, 'call build() or load() first'
         return point_in_polygon(point, self.graph)
 
     def closest_point(self, point: Point, polygon_id: int,
@@ -142,6 +148,7 @@ class VisGraph:
         performed.
         """
 
+        assert self.graph is not None, 'call build() or load() first'
         return closest_point(point, self.graph, polygon_id, length)
 
 
@@ -149,7 +156,7 @@ def _vis_graph_wrapper(args: tuple[Graph, list[Point]]):
     try:
         return _vis_graph(*args)
     except KeyboardInterrupt:
-        pass
+        return []
 
 def _vis_graph(graph: Graph, points: list[Point]):
     visible_edges = []

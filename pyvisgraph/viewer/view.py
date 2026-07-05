@@ -29,17 +29,20 @@ class GraphView(QGraphicsView):
         self.scale(1, -1)
         self._press_pos = None
 
-    def wheelEvent(self, event: QWheelEvent):
+    def wheelEvent(self, event: QWheelEvent | None):
+        if event is None:
+            return
         factor = ZOOM_FACTOR if event.angleDelta().y() > 0 else 1 / ZOOM_FACTOR
         self.scale(factor, factor)
 
-    def mousePressEvent(self, event: QMouseEvent):
-        self._press_pos = event.position()
+    def mousePressEvent(self, event: QMouseEvent | None):
+        if event is not None:
+            self._press_pos = event.position()
         super().mousePressEvent(event)
 
-    def mouseReleaseEvent(self, event: QMouseEvent):
+    def mouseReleaseEvent(self, event: QMouseEvent | None):
         super().mouseReleaseEvent(event)
-        if self._press_pos is None:
+        if event is None or self._press_pos is None:
             return
         moved = (event.position() - self._press_pos).manhattanLength()
         self._press_pos = None
