@@ -9,6 +9,8 @@ from dataclasses import dataclass
 from typing import Iterable, List, Optional, Sequence, Tuple
 
 import geopandas as gpd
+from shapely.geometry import MultiPolygon, Polygon
+from shapely.ops import unary_union
 
 from pyvisgraph.graph import Point
 
@@ -41,7 +43,9 @@ def _ring_to_points(coords: Iterable[Sequence[float]]) -> Optional[List[Point]]:
 def load_polygons(path: str, layer: Optional[str] = None) -> LoadResult:
     """Read a geopandas-supported file and return pyvisgraph polygons.
 
-    MultiPolygons are exploded into individual polygons. Interior rings
+    MultiPolygons are exploded into individual polygons. Overlapping or
+    touching polygons are dissolved into their union, since pyvisgraph's
+    rotational sweep assumes polygon edges never cross. Interior rings
     (holes) become additional obstacle polygons. Non-polygonal geometries
     are skipped and counted in LoadResult.skipped.
     """
@@ -50,24 +54,35 @@ def load_polygons(path: str, layer: Optional[str] = None) -> LoadResult:
     else:
         gdf = gpd.read_file(path)
 
-    polygons = []
+    parts = []
     skipped = 0
     for geom in gdf.geometry:
         if geom is None:
             skipped += 1
             continue
         if geom.geom_type == 'Polygon':
-            parts = [geom]
+            parts.append(geom)
         elif geom.geom_type == 'MultiPolygon':
-            parts = list(geom.geoms)
+            parts.extend(geom.geoms)
         else:
             skipped += 1
             continue
-        for poly in parts:
-            for ring in [poly.exterior] + list(poly.interiors):
-                points = _ring_to_points(ring.coords)
-                if points is not None:
-                    polygons.append(points)
+
+    merged = unary_union(parts) if parts else None
+    if merged is None or merged.is_empty:
+        parts = []
+    elif isinstance(merged, Polygon):
+        parts = [merged]
+    else:
+        assert isinstance(merged, MultiPolygon)  # union of polygons
+        parts = list(merged.geoms)
+
+    polygons = []
+    for poly in parts:
+        for ring in [poly.exterior] + list(poly.interiors):
+            points = _ring_to_points(ring.coords)
+            if points is not None:
+                polygons.append(points)
 
     if not polygons:
         raise ValueError('No polygons found in {}'.format(path))

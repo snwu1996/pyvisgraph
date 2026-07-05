@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>pyvisgraph overlapping example - 3 mutually overlapping obstacles</name>
+    <Placemark>
+      <name>lower rectangle</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.010,51.010,0 6.040,51.010,0 6.040,51.030,0 6.010,51.030,0 6.010,51.010,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>upper rectangle</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.030,51.020,0 6.060,51.020,0 6.060,51.040,0 6.030,51.040,0 6.030,51.020,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>triangle</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.050,51.015,0 6.075,51.015,0 6.0625,51.035,0 6.050,51.015,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>

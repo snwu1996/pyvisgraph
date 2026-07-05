@@ -50,6 +50,18 @@ class TestLoadPolygons:
         assert 6.0 <= minx and maxx <= 6.1
         assert 51.0 <= miny and maxy <= 51.06
 
+    def test_overlapping_polygons_are_dissolved(self):
+        # The three overlapping shapes must merge into a single obstacle,
+        # since pyvisgraph's sweep assumes polygon edges never cross.
+        result = load_polygons(kml('overlapping.kml'))
+        assert len(result.polygons) == 1
+
+    def test_nopath_walls_merge_into_ring_with_courtyard(self):
+        # Four overlapping walls dissolve into one ring polygon whose
+        # interior ring (the sealed courtyard) becomes a second polygon.
+        result = load_polygons(kml('nopath.kml'))
+        assert len(result.polygons) == 3  # ring + courtyard + triangle
+
     def test_output_builds_visgraph_with_path(self):
         result = load_polygons(kml('simple.kml'))
         graph = vg.VisGraph()

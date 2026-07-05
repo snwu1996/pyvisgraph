@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>pyvisgraph no-path example - walled courtyard with no way in</name>
+    <Placemark>
+      <name>bottom wall</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.010,51.010,0 6.070,51.010,0 6.070,51.015,0 6.010,51.015,0 6.010,51.010,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>top wall</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.010,51.045,0 6.070,51.045,0 6.070,51.050,0 6.010,51.050,0 6.010,51.045,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>left wall</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.008,51.012,0 6.016,51.012,0 6.016,51.048,0 6.008,51.048,0 6.008,51.012,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>right wall</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.064,51.012,0 6.072,51.012,0 6.072,51.048,0 6.064,51.048,0 6.064,51.012,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>triangle outside</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.085,51.020,0 6.100,51.020,0 6.0925,51.040,0 6.085,51.020,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>
