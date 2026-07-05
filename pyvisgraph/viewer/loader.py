@@ -10,6 +10,7 @@ from typing import Iterable, List, Optional, Sequence, Tuple
 
 import geopandas as gpd
 from shapely.geometry import MultiPolygon, Polygon
+from shapely.geometry.polygon import orient
 from shapely.ops import unary_union
 
 from pyvisgraph.graph import Point
@@ -17,7 +18,9 @@ from pyvisgraph.graph import Point
 
 @dataclass
 class LoadResult:
-    polygons: List[List[Point]]
+    polygons: List[List[Point]]  # dissolved, for building the visgraph
+    raw_polygons: List[List[Point]]  # as read from the file, for display;
+    # rings oriented for winding fill (exteriors CCW, holes CW)
     bounds: Tuple[float, float, float, float]  # minx, miny, maxx, maxy
     skipped: int  # non-polygonal geometries that were ignored
 
@@ -45,9 +48,10 @@ def load_polygons(path: str, layer: Optional[str] = None) -> LoadResult:
 
     MultiPolygons are exploded into individual polygons. Overlapping or
     touching polygons are dissolved into their union, since pyvisgraph's
-    rotational sweep assumes polygon edges never cross. Interior rings
-    (holes) become additional obstacle polygons. Non-polygonal geometries
-    are skipped and counted in LoadResult.skipped.
+    rotational sweep assumes polygon edges never cross; raw_polygons keeps
+    the shapes as read from the file so they can still be displayed.
+    Interior rings (holes) become additional obstacle polygons.
+    Non-polygonal geometries are skipped and counted in LoadResult.skipped.
     """
     if layer is not None:
         gdf = gpd.read_file(path, layer=layer)
@@ -68,6 +72,16 @@ def load_polygons(path: str, layer: Optional[str] = None) -> LoadResult:
             skipped += 1
             continue
 
+    # Exteriors CCW and holes CW so a winding fill paints overlap regions
+    # solid while keeping holes empty.
+    raw_polygons = []
+    for poly in parts:
+        oriented = orient(poly)
+        for ring in [oriented.exterior] + list(oriented.interiors):
+            points = _ring_to_points(ring.coords)
+            if points is not None:
+                raw_polygons.append(points)
+
     merged = unary_union(parts) if parts else None
     if merged is None or merged.is_empty:
         parts = []
@@ -87,5 +101,5 @@ def load_polygons(path: str, layer: Optional[str] = None) -> LoadResult:
     if not polygons:
         raise ValueError('No polygons found in {}'.format(path))
     minx, miny, maxx, maxy = gdf.total_bounds
-    return LoadResult(polygons=polygons, bounds=(minx, miny, maxx, maxy),
-                      skipped=skipped)
+    return LoadResult(polygons=polygons, raw_polygons=raw_polygons,
+                      bounds=(minx, miny, maxx, maxy), skipped=skipped)

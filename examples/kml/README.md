@@ -14,7 +14,8 @@ poetry run pyvisgraph-viewer examples/kml/nopath.kml
 - **simple.kml** — three well-separated convex obstacles (rectangle, triangle, hexagon).
 - **medium.kml** — concave L/U shapes, a star, a MultiGeometry placemark and a polygon with a hole.
 - **complex.kml** — a maze of 20 staggered wall segments; paths must zig-zag through the gaps.
-- **overlapping.kml** — two rectangles and a triangle that overlap each other; paths route around their union.
+- **overlapping.kml** — two rectangles and a triangle that overlap each other;
+  the original outlines are drawn, but paths route around their union.
 - **nopath.kml** — four overlapping walls enclose a courtyard with no way in;
   two points inside the courtyard can reach each other, but no path exists
   between the courtyard and the outside.

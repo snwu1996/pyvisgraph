@@ -52,15 +52,37 @@ class TestLoadPolygons:
 
     def test_overlapping_polygons_are_dissolved(self):
         # The three overlapping shapes must merge into a single obstacle,
-        # since pyvisgraph's sweep assumes polygon edges never cross.
+        # since pyvisgraph's sweep assumes polygon edges never cross. The
+        # raw shapes are kept as authored for display.
         result = load_polygons(kml('overlapping.kml'))
         assert len(result.polygons) == 1
+        assert len(result.raw_polygons) == 3
 
     def test_nopath_walls_merge_into_ring_with_courtyard(self):
         # Four overlapping walls dissolve into one ring polygon whose
         # interior ring (the sealed courtyard) becomes a second polygon.
         result = load_polygons(kml('nopath.kml'))
         assert len(result.polygons) == 3  # ring + courtyard + triangle
+        assert len(result.raw_polygons) == 5  # 4 walls + triangle
+
+    def test_raw_polygons_match_dissolved_for_disjoint_maps(self):
+        for name in ('simple.kml', 'complex.kml'):
+            result = load_polygons(kml(name))
+            assert len(result.raw_polygons) == len(result.polygons)
+
+    def test_raw_ring_orientation(self):
+        # Winding-fill display contract: exteriors CCW, holes CW.
+        def signed_area(ring):
+            return sum(p1.x * p2.y - p2.x * p1.y
+                       for p1, p2 in zip(ring, ring[1:] + ring[:1])) / 2
+
+        result = load_polygons(kml('medium.kml'))
+        holes = [ring for ring in result.raw_polygons
+                 if signed_area(ring) < 0]
+        assert len(holes) == 1  # the square-with-hole's interior ring
+        for name in ('simple.kml', 'overlapping.kml', 'nopath.kml'):
+            for ring in load_polygons(kml(name)).raw_polygons:
+                assert signed_area(ring) > 0
 
     def test_output_builds_visgraph_with_path(self):
         result = load_polygons(kml('simple.kml'))

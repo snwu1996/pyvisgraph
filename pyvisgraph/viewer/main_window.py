@@ -100,7 +100,9 @@ class MainWindow(QMainWindow):
         self.scene.set_end(None)
         self.scene.set_path(None)
         self.scene.set_vis_edges([])
-        self.scene.set_polygons(self.polygons)
+        # Show the shapes as authored; the graph is built on the dissolved
+        # polygons, which outline the same solid area.
+        self.scene.set_polygons(result.raw_polygons)
         self._bounds = result.bounds
         if self._fitted:
             self.view.fit_bounds(*self._bounds)

@@ -40,7 +40,7 @@ Optional PyQt6 + geopandas viewer, exposed as the `pyvisgraph-viewer` script (en
 
 - geopandas/PyQt6 are **optional extras** (`viewer`). Never import them at module level anywhere that gets pulled in by `import pyvisgraph` — `cli.py` guards its imports and prints an install hint when they are missing.
 - CI (`.github/workflows/ci.yml`) tests Python 3.10-3.14 with Poetry 1.8.2; the viewer extras are only installed on 3.12.
-- `loader.py` must stay Qt-free so loader tests run headless. It converts any geopandas-readable file into pyvisgraph polygons: MultiPolygons are exploded, overlapping/touching polygons are dissolved into their union (the sweep in `visible_vertices.py` assumes polygon edges never cross), interior rings (holes) become separate obstacle polygons, non-polygon geometries are skipped.
+- `loader.py` must stay Qt-free so loader tests run headless. It converts any geopandas-readable file into pyvisgraph polygons: MultiPolygons are exploded, overlapping/touching polygons are dissolved into their union (the sweep in `visible_vertices.py` assumes polygon edges never cross) with the as-authored shapes kept in `LoadResult.raw_polygons` for display (rings oriented exterior-CCW/hole-CW for the scene's winding fill), interior rings (holes) become separate obstacle polygons, non-polygon geometries are skipped.
 - `worker.py` runs the blocking `VisGraph.build()` on a QThread; `scene.py`/`view.py` render with a y-flipped view (map north = screen up) and cosmetic pens (constant pixel width under zoom). Visibility edges are batched into a single `QGraphicsPathItem` for performance.
 - GUI behavior can be smoke-tested headless with `QT_QPA_PLATFORM=offscreen`.
 

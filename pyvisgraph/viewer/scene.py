@@ -73,9 +73,14 @@ class VisGraphScene(QGraphicsScene):
             self.addItem(item)
 
     def set_polygons(self, polygons: list[list[vg.Point]]):
-        """polygons: list of list of vg.Point (open rings)."""
+        """polygons: list of list of vg.Point (open rings).
+
+        Rings must be oriented as the loader emits them (exteriors CCW,
+        holes CW): the winding fill then paints overlapping obstacles
+        solid while leaving holes empty.
+        """
         path = QPainterPath()
-        path.setFillRule(Qt.FillRule.OddEvenFill)
+        path.setFillRule(Qt.FillRule.WindingFill)
         for polygon in polygons:
             path.addPolygon(QPolygonF([QPointF(p.x, p.y) for p in polygon]))
             path.closeSubpath()
