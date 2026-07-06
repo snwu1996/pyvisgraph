@@ -30,6 +30,16 @@ from pyvisgraph.graph import Graph, Point
 from pyvisgraph.visible_vertices import edge_distance
 
 
+def path_length(path: list[Point]) -> float:
+    """Return the total Euclidean length of an in-order list of Points.
+
+    This is the sum of the straight-line distances between consecutive points,
+    i.e. the planar cost that shortest_path minimizes. Returns 0.0 for a path
+    with fewer than two points.
+    """
+    return sum(edge_distance(p1, p2) for p1, p2 in zip(path, path[1:]))
+
+
 def astar(graph: Graph, origin: Point, destination: Point,
           add_to_visgraph: Graph | None):
     """A* search from origin to destination.

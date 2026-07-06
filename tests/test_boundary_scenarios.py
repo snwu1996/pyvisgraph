@@ -28,8 +28,8 @@ def rect(x0, y0, x1, y1):
 
 
 def path_length(path):
-    return sum(math.hypot(p2.x - p1.x, p2.y - p1.y)
-               for p1, p2 in zip(path, path[1:]))
+    # Thin wrapper over the core helper so the tests below read the same.
+    return vg.path_length(path)
 
 
 class TestEvenOddDonut:

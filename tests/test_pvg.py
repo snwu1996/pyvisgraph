@@ -290,7 +290,20 @@ class TestCollinear:
         assert pip > -1
 
 def path_length(path):
-    return sum(edge_distance(u, w) for u, w in zip(path[:-1], path[1:]))
+    # Exercises the core helper; the tests below assert on its result.
+    return vg.path_length(path)
+
+
+class TestPathLength:
+
+    def test_sums_consecutive_segments(self):
+        # 3-4-5 right angle then a unit step: 3 + 4 = 7.
+        path = [Point(0, 0), Point(3, 0), Point(3, 4)]
+        assert vg.path_length(path) == 7.0
+
+    def test_short_paths_have_zero_length(self):
+        assert vg.path_length([]) == 0.0
+        assert vg.path_length([Point(1, 2)]) == 0.0
 
 
 class TestBuildProgress:
