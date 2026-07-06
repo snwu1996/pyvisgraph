@@ -32,8 +32,26 @@ class GraphView(QGraphicsView):
     def wheelEvent(self, event: QWheelEvent | None):
         if event is None:
             return
-        factor = ZOOM_FACTOR if event.angleDelta().y() > 0 else 1 / ZOOM_FACTOR
+        if event.angleDelta().y() > 0:
+            factor = ZOOM_FACTOR
+        else:
+            # Don't let the user zoom out past the point where the whole
+            # canvas (2x the polygon bounds) fits the viewport.
+            min_scale = self._min_zoom_scale()
+            current = abs(self.transform().m11())
+            if current <= min_scale:
+                return
+            factor = max(1 / ZOOM_FACTOR, min_scale / current)
         self.scale(factor, factor)
+
+    def _min_zoom_scale(self) -> float:
+        """Scale at which the scene rect (the canvas) just fills the viewport."""
+        rect = self.sceneRect()
+        viewport = self.viewport()
+        if rect.isEmpty() or viewport is None:
+            return 0.0
+        return min(viewport.width() / rect.width(),
+                   viewport.height() / rect.height())
 
     def mousePressEvent(self, event: QMouseEvent | None):
         if event is not None:
@@ -50,6 +68,19 @@ class GraphView(QGraphicsView):
             scene_pos = self.mapToScene(event.position().toPoint())
             self.pointClicked.emit(scene_pos.x(), scene_pos.y(),
                                    event.button())
+
+    def set_canvas(self, minx: float, miny: float,
+                   maxx: float, maxy: float):
+        """Fix the scrollable canvas to 2x the given bounds, centered on them.
+
+        This caps how far out the user can zoom and pan: at minimum zoom the
+        whole canvas fits the viewport, with the polygons centered in it.
+        """
+        width = (maxx - minx) or 1.0
+        height = (maxy - miny) or 1.0
+        cx = (minx + maxx) / 2
+        cy = (miny + maxy) / 2
+        self.setSceneRect(cx - width, cy - height, 2 * width, 2 * height)
 
     def fit_bounds(self, minx: float, miny: float,
                    maxx: float, maxy: float):

@@ -104,6 +104,7 @@ class MainWindow(QMainWindow):
         # polygons, which outline the same solid area.
         self.scene.set_polygons(result.raw_polygons)
         self._bounds = result.bounds
+        self.view.set_canvas(*self._bounds)
         if self._fitted:
             self.view.fit_bounds(*self._bounds)
 
