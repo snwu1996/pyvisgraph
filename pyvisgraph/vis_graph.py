@@ -37,12 +37,72 @@ from pyvisgraph.visible_vertices import closest_point
 
 logger = logging.getLogger(__name__)
 
+# An exclusion frame is the extent of the map grown by this fraction of its
+# larger side, so it strictly contains the navigable boundary. Its interior
+# minus the navigable area is the off-limits solid; the four frame corners are
+# the only vertices the inversion adds.
+FRAME_MARGIN_FRAC = 0.05
+
+
+def _extent(rings: list[list[Point]]) -> tuple[float, float, float, float]:
+    """Return (minx, miny, maxx, maxy) over every point in every ring."""
+    xs = [p.x for ring in rings for p in ring]
+    ys = [p.y for ring in rings for p in ring]
+    if not xs:
+        raise ValueError('cannot take the extent of an empty ring list')
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def boundary_frame(bounds: tuple[float, float, float, float],
+                   margin_frac: float = FRAME_MARGIN_FRAC) -> list[Point]:
+    """Return a counter-clockwise rectangle ring just outside *bounds*.
+
+    *bounds* is (minx, miny, maxx, maxy). The rectangle is grown on every side
+    by ``margin_frac`` of the larger extent so it strictly contains it.
+    """
+    minx, miny, maxx, maxy = bounds
+    margin = margin_frac * max(maxx - minx, maxy - miny, 1e-9)
+    return [Point(minx - margin, miny - margin),
+            Point(maxx + margin, miny - margin),
+            Point(maxx + margin, maxy + margin),
+            Point(minx - margin, maxy + margin)]
+
+
+def invert_boundary(obstacles: list[list[Point]], boundary: list[list[Point]],
+                    bounds: tuple[float, float, float, float] | None = None,
+                    margin_frac: float = FRAME_MARGIN_FRAC) -> list[list[Point]]:
+    """Turn a navigable boundary into obstacle rings for an inverted map.
+
+    Returns a polygon (ring) list that, resolved by pyvisgraph's even-odd
+    solidness rule, marks everything *outside* the ``boundary`` rings as solid
+    off-limits space, the interior as free, and ``obstacles`` as solid islands
+    inside it. An enclosing frame just outside ``bounds`` is prepended so the
+    outside region is bounded; ``bounds`` defaults to the extent of the
+    boundary and obstacle points.
+
+    ``boundary`` may be several rings (an outer ring plus holes, as a shapely
+    difference emits) and ``obstacles`` may be empty. The boundary and obstacle
+    rings must not cross each other or the frame, the same non-crossing
+    contract the visibility sweep places on ordinary polygons.
+    """
+    if bounds is None:
+        bounds = _extent(boundary + obstacles)
+    frame = boundary_frame(bounds, margin_frac)
+    # Copy each ring so Graph's in-place closing-point pop does not mutate the
+    # caller's boundary/obstacle lists.
+    return ([frame] + [list(ring) for ring in boundary]
+            + [list(ring) for ring in obstacles])
+
 
 class VisGraph:
 
     def __init__(self):
         self.graph: Graph | None = None
         self.visgraph: Graph | None = None
+        # The navigable boundary rings this graph was built with, or None for
+        # an ordinary (non-inverted) map. Kept for reference/display; not
+        # persisted by save().
+        self.boundary: list[list[Point]] | None = None
 
     def load(self, filename: str):
         """Load obstacle graph and visibility graph. """
@@ -54,7 +114,8 @@ class VisGraph:
         with open(filename, 'wb') as output:
             pickle.dump((self.graph, self.visgraph), output, -1)
 
-    def build(self, input: list[list[Point]], workers: int = 1,
+    def build(self, input: list[list[Point]],
+              boundary: list[list[Point]] | None = None, workers: int = 1,
               status: bool = True,
               progress: Callable[[int, int], None] | None = None):
         """Build visibility graph based on a list of polygons.
@@ -63,6 +124,12 @@ class VisGraph:
         in-order (clockwise or counter clockwise) Points. It only one polygon,
         it must still be a list in a list, i.e. [[Point(0,0), Point(2,0),
         Point(2,1)]].
+        If boundary is given (a navigable-region ring, or several rings), the
+        map is inverted about it: everything outside the boundary becomes solid
+        off-limits space, the interior is free, and the input polygons remain
+        solid obstacle islands inside it. An enclosing frame is added
+        automatically (see invert_boundary); the boundary and obstacle rings
+        must not cross each other.
         Take advantage of processors with multiple cores by setting workers to
         the number of subprocesses you want. Defaults to 1, i.e. no subprocess
         will be started.
@@ -71,6 +138,9 @@ class VisGraph:
         number of vertices whose visibility has been computed so far.
         """
 
+        self.boundary = boundary
+        if boundary is not None:
+            input = invert_boundary(input, boundary)
         self.graph = Graph(input)
         self.visgraph = Graph([])
 

@@ -93,6 +93,92 @@ class TestBoundaryInversion:
         assert max(p.y for p in path) >= 6 or min(p.y for p in path) <= 4
 
 
+class TestBoundaryZoneBuild:
+    """The same exclusion-zone map as TestBoundaryInversion, but built through
+    the native ``VisGraph.build(input, boundary=...)`` API instead of hand-
+    assembling the frame. The boundary zone logic now lives in the core
+    library, so passing obstacles + a navigable boundary must reproduce the
+    inverted map."""
+
+    BOUNDARY = [rect(0, 0, 10, 10)]    # navigable region (a list of rings)
+    OBSTACLES = [rect(4, 4, 6, 6)]     # an island inside it
+
+    def _build(self):
+        graph = vg.VisGraph()
+        graph.build(self.OBSTACLES, boundary=self.BOUNDARY, status=False)
+        return graph
+
+    def test_boundary_inverts_solidness(self):
+        graph = self._build()
+        # Just outside the boundary (x=0) but inside the tight auto-frame.
+        assert graph.point_in_solid(vg.Point(-0.2, 5))
+        assert not graph.point_in_solid(vg.Point(1, 5))  # navigable interior
+        assert graph.point_in_solid(vg.Point(5, 5))      # obstacle island
+        assert graph.boundary is self.BOUNDARY
+
+    def test_frame_encloses_the_boundary(self):
+        # The auto-added frame sits FRAME_MARGIN_FRAC outside the extent, so a
+        # point just beyond the boundary is off-limits, not off the map.
+        graph = self._build()
+        assert graph.point_in_solid(vg.Point(-0.4 * 10 * vg.FRAME_MARGIN_FRAC,
+                                             5))
+
+    def test_path_routes_around_obstacle_inside_boundary(self):
+        graph = self._build()
+        left, right = vg.Point(1, 5), vg.Point(9, 5)
+        path = graph.shortest_path(left, right)
+        assert path[0] == left and path[-1] == right
+        straight = math.hypot(right.x - left.x, right.y - left.y)
+        assert path_length(path) > straight  # detoured around the island
+
+    def test_cannot_leave_the_boundary(self):
+        # Everything outside the boundary is solid, so a navigable point cannot
+        # reach a point out in the off-limits region.
+        graph = self._build()
+        assert graph.shortest_path(vg.Point(1, 5), vg.Point(-0.2, 5)) == []
+
+    def test_no_boundary_builds_ordinary_map(self):
+        # Without a boundary the obstacle is just an obstacle: its interior is
+        # solid but the surrounding world is free and unbounded.
+        graph = vg.VisGraph()
+        graph.build(self.OBSTACLES, status=False)
+        assert graph.boundary is None
+        assert graph.point_in_solid(vg.Point(5, 5))
+        assert not graph.point_in_solid(vg.Point(-2, 5))  # free, not off-limits
+
+
+class TestInvertBoundaryHelper:
+    """The shapely-free frame inversion, exercised directly. This is what the
+    vgstudio loader delegates to after computing its navigable region."""
+
+    def test_prepends_frame_and_keeps_rings(self):
+        boundary = [rect(0, 0, 10, 10)]
+        obstacles = [rect(4, 4, 6, 6)]
+        rings = vg.invert_boundary(obstacles, boundary)
+        # frame + 1 boundary ring + 1 obstacle ring
+        assert len(rings) == 3
+        # The frame strictly contains the [0,10] extent on every side.
+        frame_xs = [p.x for p in rings[0]]
+        frame_ys = [p.y for p in rings[0]]
+        assert min(frame_xs) < 0 and max(frame_xs) > 10
+        assert min(frame_ys) < 0 and max(frame_ys) > 10
+
+    def test_does_not_mutate_caller_rings(self):
+        boundary = [rect(0, 0, 10, 10)]
+        obstacles = [rect(4, 4, 6, 6)]
+        before = [list(r) for r in boundary + obstacles]
+        vg.invert_boundary(obstacles, boundary)
+        # Graph pops the closing point off its rings; invert_boundary copies so
+        # the originals are untouched.
+        assert [boundary[0], obstacles[0]] == before
+
+    def test_explicit_bounds_override_extent(self):
+        boundary = [rect(0, 0, 10, 10)]
+        # A frame sized to a far larger extent puts its corners well past 10.
+        rings = vg.invert_boundary([], boundary, bounds=(-100, -100, 100, 100))
+        assert min(p.x for p in rings[0]) < -100
+
+
 class TestConcaveDetour:
     """A solid peninsula hanging from the top forces a path between two points
     near its base to detour all the way around the tip (port of the loader's
