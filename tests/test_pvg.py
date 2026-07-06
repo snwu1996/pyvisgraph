@@ -293,6 +293,34 @@ def path_length(path):
     return sum(edge_distance(u, w) for u, w in zip(path[:-1], path[1:]))
 
 
+class TestBuildProgress:
+
+    def setup_method(self, method):
+        self.polys = [[Point(1, 1), Point(3, 1), Point(3, 3), Point(1, 3)],
+                      [Point(4, 2), Point(6, 2), Point(5, 4)],
+                      [Point(2, 5), Point(4, 5), Point(4, 7), Point(2, 7)]]
+
+    def test_progress_reports_all_vertices(self):
+        calls = []
+        g = vg.VisGraph()
+        g.build(self.polys, status=False,
+                progress=lambda done, total: calls.append((done, total)))
+        total = sum(len(poly) for poly in self.polys)
+        assert calls, 'progress callback was never called'
+        assert all(t == total for _, t in calls)
+        dones = [d for d, _ in calls]
+        assert dones == sorted(dones)
+        assert dones[-1] == total
+
+    def test_progress_with_workers(self):
+        calls = []
+        g = vg.VisGraph()
+        g.build(self.polys, workers=2, status=False,
+                progress=lambda done, total: calls.append((done, total)))
+        total = sum(len(poly) for poly in self.polys)
+        assert calls and calls[-1] == (total, total)
+
+
 class TestShortestPaths:
 
     def setup_method(self, method):

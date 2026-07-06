@@ -9,12 +9,14 @@ import pyvisgraph as vg
 class BuildWorker(QThread):
     """Builds the visibility graph off the UI thread.
 
-    build() has no progress callback, so the UI shows an indeterminate
-    busy state until finished_ok/failed fires.
+    progress(done, total) reports how many vertices have had their
+    visibility computed; the signal crosses to the UI thread via Qt's
+    queued connection.
     """
 
     finished_ok = pyqtSignal(object)  # the built vg.VisGraph
     failed = pyqtSignal(str)
+    progress = pyqtSignal(int, int)  # vertices done, total vertices
 
     def __init__(self, polygons: list[list[vg.Point]], workers: int = 1,
                  parent: QObject | None = None):
@@ -25,7 +27,8 @@ class BuildWorker(QThread):
     def run(self):
         try:
             graph = vg.VisGraph()
-            graph.build(self._polygons, workers=self._workers, status=False)
+            graph.build(self._polygons, workers=self._workers, status=False,
+                        progress=self.progress.emit)
         except Exception as e:  # surface any build failure in the UI
             self.failed.emit(str(e))
             return

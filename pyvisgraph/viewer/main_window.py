@@ -108,6 +108,7 @@ class MainWindow(QMainWindow):
             self.view.fit_bounds(*self._bounds)
 
         self.toggle_edges_action.setEnabled(False)
+        self.busy_bar.setRange(0, 0)  # indeterminate until progress arrives
         self.busy_bar.show()
         skipped_note = ('' if not result.skipped else
                         ' ({} non-polygon geometries skipped)'.format(
@@ -120,6 +121,7 @@ class MainWindow(QMainWindow):
                                   parent=self)
         self.worker.finished_ok.connect(self.on_build_finished)
         self.worker.failed.connect(self.on_build_failed)
+        self.worker.progress.connect(self.on_build_progress)
         self.worker.start()
 
     def open_file_dialog(self):
@@ -141,6 +143,12 @@ class MainWindow(QMainWindow):
         if not self._fitted and self._bounds is not None:
             self._fitted = True
             self.view.fit_bounds(*self._bounds)
+
+    def on_build_progress(self, done: int, total: int):
+        if self.sender() is not self.worker:
+            return  # stale progress from a build superseded by File > Open
+        self.busy_bar.setRange(0, total)
+        self.busy_bar.setValue(done)
 
     def on_build_finished(self, graph: vg.VisGraph):
         if self.sender() is not self.worker:

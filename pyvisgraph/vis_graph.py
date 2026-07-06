@@ -24,6 +24,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import pickle
+from collections.abc import Callable
 from multiprocessing import Pool
 from tqdm import tqdm
 
@@ -51,7 +52,8 @@ class VisGraph:
             pickle.dump((self.graph, self.visgraph), output, -1)
 
     def build(self, input: list[list[Point]], workers: int = 1,
-              status: bool = True):
+              status: bool = True,
+              progress: Callable[[int, int], None] | None = None):
         """Build visibility graph based on a list of polygons.
 
         The input must be a list of polygons, where each polygon is a list of
@@ -62,13 +64,17 @@ class VisGraph:
         the number of subprocesses you want. Defaults to 1, i.e. no subprocess
         will be started.
         Set status=False to turn off the statusbar when building.
+        progress, if given, is called as progress(done, total) with the
+        number of vertices whose visibility has been computed so far.
         """
 
         self.graph = Graph(input)
         self.visgraph = Graph([])
 
         points = self.graph.get_points()
-        batch_size = 10 
+        batch_size = 10
+        total = len(points)
+        done = 0
 
         if workers == 1:
             for batch in tqdm([points[i:i + batch_size]
@@ -76,16 +82,22 @@ class VisGraph:
                             disable=not status):
                 for edge in _vis_graph(self.graph, batch):
                     self.visgraph.add_edge(edge)
+                done += len(batch)
+                if progress is not None:
+                    progress(done, total)
         else:
             pool = Pool(workers)
             batches = [(self.graph, points[i:i + batch_size])
                        for i in range(0, len(points), batch_size)]
 
-            results = list(tqdm(pool.imap(_vis_graph_wrapper, batches), total=len(batches),
-                disable=not status))
-            for result in results:
+            for i, result in enumerate(tqdm(
+                    pool.imap(_vis_graph_wrapper, batches),
+                    total=len(batches), disable=not status)):
                 for edge in result:
                     self.visgraph.add_edge(edge)
+                done += len(batches[i][1])
+                if progress is not None:
+                    progress(done, total)
 
     def find_visible(self, point: Point):
         """Find vertices visible from point."""
