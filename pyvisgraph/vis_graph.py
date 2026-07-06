@@ -23,6 +23,7 @@ SOFTWARE.
 """
 from __future__ import annotations
 
+import logging
 import pickle
 from collections.abc import Callable
 from multiprocessing import Pool
@@ -33,6 +34,8 @@ from pyvisgraph.shortest_path import shortest_path
 from pyvisgraph.visible_vertices import (visible_vertices, point_in_polygon,
                                          point_in_solid)
 from pyvisgraph.visible_vertices import closest_point
+
+logger = logging.getLogger(__name__)
 
 
 class VisGraph:
@@ -102,15 +105,18 @@ class VisGraph:
     def find_visible(self, point: Point):
         """Find vertices visible from point."""
 
-        assert self.graph is not None, 'call build() or load() first'
+        if self.graph is None:
+            logger.warning('call build() or load() first')
+            return None
         return visible_vertices(point, self.graph)
 
     def update(self, points: list[Point], origin: Point | None = None,
                destination: Point | None = None):
         """Update visgraph by checking visibility of Points in list points."""
 
-        assert self.graph is not None and self.visgraph is not None, \
-            'call build() or load() first'
+        if self.graph is None or self.visgraph is None:
+            logger.warning('call build() or load() first')
+            return None
         for p in points:
             for v in visible_vertices(p, self.graph, origin=origin,
                                       destination=destination):
@@ -129,8 +135,9 @@ class VisGraph:
         empty list when no path exists between origin and destination.
         """
 
-        assert self.graph is not None and self.visgraph is not None, \
-            'call build() or load() first'
+        if self.graph is None or self.visgraph is None:
+            logger.warning('call build() or load() first')
+            return None
         origin_exists = origin in self.visgraph
         dest_exists = destination in self.visgraph
         if origin_exists and dest_exists:
@@ -151,7 +158,9 @@ class VisGraph:
     def point_in_polygon(self, point: Point):
         """Return polygon_id if point in a polygon, -1 otherwise."""
 
-        assert self.graph is not None, 'call build() or load() first'
+        if self.graph is None:
+            logger.warning('call build() or load() first')
+            return None
         return point_in_polygon(point, self.graph)
 
     def point_in_solid(self, point: Point):
@@ -162,7 +171,9 @@ class VisGraph:
         unlike point_in_polygon which reports it as inside the outer ring.
         """
 
-        assert self.graph is not None, 'call build() or load() first'
+        if self.graph is None:
+            logger.warning('call build() or load() first')
+            return None
         return point_in_solid(point, self.graph)
 
     def closest_point(self, point: Point, polygon_id: int,
@@ -173,7 +184,9 @@ class VisGraph:
         performed.
         """
 
-        assert self.graph is not None, 'call build() or load() first'
+        if self.graph is None:
+            logger.warning('call build() or load() first')
+            return None
         return closest_point(point, self.graph, polygon_id, length)
 
 
