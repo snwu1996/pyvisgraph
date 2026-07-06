@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(poetry --version)",
+      "Bash(poetry check *)",
+      "Bash(poetry lock *)",
+      "Bash(poetry install *)",
+      "Bash(poetry run *)",
+      "Bash(poetry build *)",
+      "Bash(tar tzf *)",
+      "Bash(unzip -l dist/pyvisgraph-0.2.1-py3-none-any.whl)",
+      "Bash(/home/snwu/.venvs/pyvisgraph-vmISdiIu-py3.12/bin/pyright --pythonpath /home/snwu/.venvs/pyvisgraph-vmISdiIu-py3.12/bin/python)",
+      "Bash(sed -i '25s/from haversine import haversine/from haversine import haversine  # type: ignore[import-not-found]/' examples/2_calculate_shortest_distance.py)",
+      "Bash(sed -i '25s/import folium/import folium  # type: ignore[import-not-found]/' examples/3_plot_path_on_interactive_map.py)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git stash *)",
+      "Bash(QT_QPA_PLATFORM=offscreen poetry run *)",
+      "Bash(git reset *)",
+      "Bash(git -C /home/snwu/Projects/VisibilityGraphs/pyvisgraph status --short)",
+      "Bash(git -C /home/snwu/Projects/VisibilityGraphs/pyvisgraph diff --stat)",
+      "Bash(bash /tmp/claude-1000/-home-snwu-Projects-VisibilityGraphs-pyvisgraph/f0eccee8-f5fb-41b3-8ca1-8c6a66f45e0c/scratchpad/sigint_test.sh)",
+      "Bash(sort -k5 -n)",
+      "Bash(bash /tmp/claude-1000/-home-snwu-Projects-VisibilityGraphs-pyvisgraph/f0eccee8-f5fb-41b3-8ca1-8c6a66f45e0c/scratchpad/sigint_test2.sh)",
+      "Bash(sed -i 's/kill -TERM \"-\\\\$PGID\"/kill -TERM \"\\\\$LEADER\"/' /tmp/claude-1000/-home-snwu-Projects-VisibilityGraphs-pyvisgraph/f0eccee8-f5fb-41b3-8ca1-8c6a66f45e0c/scratchpad/sigterm_test.sh)",
+      "Bash(bash /tmp/claude-1000/-home-snwu-Projects-VisibilityGraphs-pyvisgraph/f0eccee8-f5fb-41b3-8ca1-8c6a66f45e0c/scratchpad/sigterm_test.sh)",
+      "Bash(pkill -9 -g 119314)",
+      "Bash(ps -eo pid,pgid,comm)",
+      "Bash(awk '$2==119314')",
+      "Bash(kill -9 122177 122178 122179 122180 122181 122182 122183 122184 122185 122186 122187)",
+      "Bash(bash /tmp/claude-1000/-home-snwu-Projects-VisibilityGraphs-pyvisgraph/f0eccee8-f5fb-41b3-8ca1-8c6a66f45e0c/scratchpad/repro_test.sh int-group)",
+      "Bash(bash /tmp/claude-1000/-home-snwu-Projects-VisibilityGraphs-pyvisgraph/f0eccee8-f5fb-41b3-8ca1-8c6a66f45e0c/scratchpad/repro_test.sh term-leader)",
+      "Bash(bash /tmp/claude-1000/-home-snwu-Projects-VisibilityGraphs-pyvisgraph/f0eccee8-f5fb-41b3-8ca1-8c6a66f45e0c/scratchpad/repro_test.sh kill9-leader)",
+      "Bash(grep -cP '\\\\r$' pyvisgraph/vis_graph.py pyvisgraph/viewer/cli.py pyvisgraph/viewer/worker.py pyvisgraph/viewer/main_window.py)",
+      "Bash(pkill -9 -f 'pyvisgraph-viewer.*nhc_peak')",
+      "Bash(bash /tmp/claude-1000/-home-snwu-Projects-VisibilityGraphs-pyvisgraph/f0eccee8-f5fb-41b3-8ca1-8c6a66f45e0c/scratchpad/inspect_1s.sh)",
+      "Bash(git diff *)",
+      "Bash(git commit *)"
+    ]
+  }
+}
