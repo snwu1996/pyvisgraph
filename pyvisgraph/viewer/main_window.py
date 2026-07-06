@@ -24,11 +24,12 @@ CLICK_HINT = 'click to set start, click again to set end'
 class MainWindow(QMainWindow):
 
     def __init__(self, path: str, workers: int = 1,
-                 layer: str | None = None):
+                 layer: str | None = None, boundary_name: str = 'boundary'):
         super().__init__()
         self.resize(1000, 750)
 
         self.workers = workers
+        self.boundary_name = boundary_name
         self.worker: BuildWorker | None = None
         self.visgraph: vg.VisGraph | None = None
         self.start: vg.Point | None = None
@@ -88,7 +89,8 @@ class MainWindow(QMainWindow):
         Raises on unreadable/polygon-free files, leaving the current
         state untouched when called from the Open dialog.
         """
-        result = load_polygons(path, layer=layer)
+        result = load_polygons(path, layer=layer,
+                               boundary_name=self.boundary_name)
 
         self.setWindowTitle('pyvisgraph viewer - {}'.format(
             os.path.basename(path)))
@@ -101,8 +103,10 @@ class MainWindow(QMainWindow):
         self.scene.set_path(None)
         self.scene.set_vis_edges([])
         # Show the shapes as authored; the graph is built on the dissolved
-        # polygons, which outline the same solid area.
+        # polygons, which outline the same solid area. When the map has an
+        # exclusion boundary, the scene shades everything outside it off-limits.
         self.scene.set_polygons(result.raw_polygons)
+        self.scene.set_boundary(result.boundary)
         self._bounds = result.bounds
         self.view.set_canvas(*self._bounds)
         if self._fitted:
@@ -174,7 +178,7 @@ class MainWindow(QMainWindow):
         if self.visgraph is None or button != Qt.MouseButton.LeftButton:
             return
         point = vg.Point(x, y)
-        note = (' (point is inside an obstacle)'
+        note = (' (point is off-limits)'
                 if self.visgraph.point_in_solid(point) else '')
         if self.start is None or self.end is not None:
             # First click of a new pair: set the start, drop any old path.
@@ -202,10 +206,11 @@ class MainWindow(QMainWindow):
             self._status_bar().showMessage(
                 'Start set - click again to set end' + note)
             return
-        # A point in solid obstacle space can never be on a valid path; the
-        # search is not run for it as it may thread through the boundary.
-        # Points in the hole of a donut-shaped obstacle are free space and
-        # get a real search (paths within the hole, none to the outside).
+        # A point in solid space can never be on a valid path; the search is
+        # not run for it as it may thread through a wall. Solid means inside an
+        # obstacle or, on a map with an exclusion boundary, outside that
+        # boundary. Points in the hole of a donut-shaped obstacle are free
+        # space and get a real search (paths within the hole, none outside).
         blocked = [name for name, p in (('start', self.start),
                                         ('end', self.end))
                    if self.visgraph.point_in_solid(p)]
@@ -214,7 +219,7 @@ class MainWindow(QMainWindow):
                     'the {} point is'.format(blocked[0]))
             self.scene.set_path(None)
             self._status_bar().showMessage(
-                'No path found: {} inside an obstacle'.format(what))
+                'No path found: {} off-limits'.format(what))
             return
         path = self.visgraph.shortest_path(self.start, self.end)
         if not path or len(path) < 2:

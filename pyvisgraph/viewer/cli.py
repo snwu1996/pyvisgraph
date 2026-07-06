@@ -30,6 +30,10 @@ def main(argv: list[str] | None = None) -> int:
                              'visibility graph (default: 1)')
     parser.add_argument('--layer', default=None,
                         help='layer name for multi-layer sources (e.g. GPKG)')
+    parser.add_argument('--boundary', default='boundary',
+                        help="feature Name marking the outer navigable "
+                             "boundary; everything outside it is off-limits "
+                             "(default: 'boundary')")
     args = parser.parse_args(argv)
 
     try:
@@ -49,7 +53,8 @@ def main(argv: list[str] | None = None) -> int:
 
     app = QApplication(sys.argv[:1])
     try:
-        window = MainWindow(args.file, workers=args.workers, layer=args.layer)
+        window = MainWindow(args.file, workers=args.workers, layer=args.layer,
+                            boundary_name=args.boundary)
     except Exception as e:
         logger.error('Could not load %s: %s', args.file, e)
         return 1

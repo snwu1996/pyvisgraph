@@ -1,52 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
   <Document>
-    <name>pyvisgraph no-path example - walled courtyard with no way in</name>
+    <name>pyvisgraph exclusion-zone example - boundary crossing obstacles</name>
+    <!-- The 'boundary' placemark defines the navigable area; everything
+         outside it is off-limits. Some obstacles straddle the boundary and
+         one lies fully outside it, exercising the crossing resolution. -->
     <Placemark>
       <name>boundary</name>
       <Polygon>
         <outerBoundaryIs><LinearRing><coordinates>
-          6.000,51.000,0 6.110,51.000,0 6.110,51.060,0 6.000,51.060,0 6.000,51.000,0
+          6.000,51.000,0 6.100,51.000,0 6.100,51.050,0 6.000,51.050,0 6.000,51.000,0
         </coordinates></LinearRing></outerBoundaryIs>
       </Polygon>
     </Placemark>
     <Placemark>
-      <name>bottom wall</name>
+      <name>straddle_left</name>
       <Polygon>
         <outerBoundaryIs><LinearRing><coordinates>
-          6.010,51.010,0 6.070,51.010,0 6.070,51.015,0 6.010,51.015,0 6.010,51.010,0
+          5.985,51.010,0 6.020,51.010,0 6.020,51.020,0 5.985,51.020,0 5.985,51.010,0
         </coordinates></LinearRing></outerBoundaryIs>
       </Polygon>
     </Placemark>
     <Placemark>
-      <name>top wall</name>
+      <name>straddle_top</name>
       <Polygon>
         <outerBoundaryIs><LinearRing><coordinates>
-          6.010,51.045,0 6.070,51.045,0 6.070,51.050,0 6.010,51.050,0 6.010,51.045,0
+          6.070,51.040,0 6.085,51.040,0 6.085,51.062,0 6.070,51.062,0 6.070,51.040,0
         </coordinates></LinearRing></outerBoundaryIs>
       </Polygon>
     </Placemark>
     <Placemark>
-      <name>left wall</name>
+      <name>inside_block</name>
       <Polygon>
         <outerBoundaryIs><LinearRing><coordinates>
-          6.008,51.012,0 6.016,51.012,0 6.016,51.048,0 6.008,51.048,0 6.008,51.012,0
+          6.040,51.018,0 6.060,51.018,0 6.060,51.032,0 6.040,51.032,0 6.040,51.018,0
         </coordinates></LinearRing></outerBoundaryIs>
       </Polygon>
     </Placemark>
     <Placemark>
-      <name>right wall</name>
+      <name>outside_block</name>
       <Polygon>
         <outerBoundaryIs><LinearRing><coordinates>
-          6.064,51.012,0 6.072,51.012,0 6.072,51.048,0 6.064,51.048,0 6.064,51.012,0
-        </coordinates></LinearRing></outerBoundaryIs>
-      </Polygon>
-    </Placemark>
-    <Placemark>
-      <name>triangle outside</name>
-      <Polygon>
-        <outerBoundaryIs><LinearRing><coordinates>
-          6.085,51.020,0 6.100,51.020,0 6.0925,51.040,0 6.085,51.020,0
+          6.115,51.020,0 6.135,51.020,0 6.135,51.030,0 6.115,51.030,0 6.115,51.020,0
         </coordinates></LinearRing></outerBoundaryIs>
       </Polygon>
     </Placemark>

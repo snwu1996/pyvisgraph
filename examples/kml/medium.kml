@@ -3,6 +3,14 @@
   <Document>
     <name>pyvisgraph medium example - concave shapes, multi-geometry and a hole</name>
     <Placemark>
+      <name>boundary</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          6.000,51.000,0 6.155,51.000,0 6.155,51.097,0 6.000,51.097,0 6.000,51.000,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
       <name>rectangle-a</name>
       <Polygon>
         <outerBoundaryIs><LinearRing><coordinates>

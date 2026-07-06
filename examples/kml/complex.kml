@@ -3,6 +3,14 @@
   <Document>
     <name>pyvisgraph complex example - staggered wall maze (20 walls)</name>
     <Placemark>
+      <name>boundary</name>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>
+          5.990,51.010,0 6.210,51.010,0 6.210,51.138,0 5.990,51.138,0 5.990,51.010,0
+        </coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
       <name>wall-r1-1</name>
       <Polygon>
         <outerBoundaryIs><LinearRing><coordinates>
