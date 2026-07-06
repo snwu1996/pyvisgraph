@@ -116,17 +116,34 @@ class TestBenchmarkMaps:
             assert polygon[0] != polygon[-1]
 
     def test_benchmark_maps_present(self):
-        assert len(benchmark_maps()) == 20
+        assert len(benchmark_maps()) == 30
 
     @pytest.mark.parametrize(
         'map_path', [m for m in benchmark_maps()
-                     if int(os.path.basename(m)[4:6]) >= 11],
+                     if 11 <= int(os.path.basename(m)[4:6]) <= 20],
         ids=os.path.basename)
     def test_overlap_benchmark_maps_dissolve(self, map_path):
         # Maps 11-20 draw obstacles as clusters of overlapping shapes;
         # dissolving must reduce the polygon count.
         result = load_polygons(map_path)
         assert len(result.polygons) < len(result.raw_polygons)
+
+    @pytest.mark.parametrize(
+        'map_path', [m for m in benchmark_maps()
+                     if int(os.path.basename(m)[4:6]) >= 21],
+        ids=os.path.basename)
+    def test_holed_benchmark_maps_keep_holes(self, map_path):
+        # Maps 21-30 place donut obstacles with 1-5 holes; the holes must
+        # survive loading as clockwise rings in the display polygons.
+        def signed_area(ring):
+            return sum(p1.x * p2.y - p2.x * p1.y
+                       for p1, p2 in zip(ring, ring[1:] + ring[:1])) / 2
+
+        result = load_polygons(map_path)
+        holes = sum(1 for ring in result.raw_polygons
+                    if signed_area(ring) < 0)
+        outers = len(result.raw_polygons) - holes
+        assert holes >= outers  # every obstacle has at least one hole
 
     def test_smallest_benchmark_map_builds_and_routes(self):
         result = load_polygons(os.path.join(KML_DIR, 'benchmark',

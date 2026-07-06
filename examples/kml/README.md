@@ -20,7 +20,7 @@ poetry run pyvisgraph-viewer examples/kml/nopath.kml
   two points inside the courtyard can reach each other, but no path exists
   between the courtyard and the outside.
 
-The `benchmark/` folder holds 20 generated maps for
+The `benchmark/` folder holds 30 generated maps for
 `examples/profile_shortest_path.py`; see `benchmark/benchmarks.md` for
 per-map descriptions and the latest timing report.
 
