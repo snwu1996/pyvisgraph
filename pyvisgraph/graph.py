@@ -29,7 +29,11 @@ from collections import defaultdict
 class Point:
     __slots__ = ('x', 'y', 'polygon_id')
 
-    def __init__(self, x: float, y: float, polygon_id: int = -1):
+    x: float
+    y: float
+    polygon_id: int
+
+    def __init__(self, x: float, y: float, polygon_id: int = -1) -> None:
         self.x = float(x)
         self.y = float(y)
         self.polygon_id = polygon_id
@@ -38,39 +42,42 @@ class Point:
         return (isinstance(point, Point)
                 and self.x == point.x and self.y == point.y)
 
-    def __ne__(self, point: object):
+    def __ne__(self, point: object) -> bool:
         return not self.__eq__(point)
 
-    def __lt__(self, point: Point):
+    def __lt__(self, point: Point) -> bool:
         """ This is only needed for shortest path calculations where heapq is
             used. When there are two points of equal distance, heapq will
             instead evaluate the Points, which doesnt work in Python 3 and
             throw a TypeError."""
         return hash(self) < hash(point)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "(%.2f, %.2f)" % (self.x, self.y)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return self.x.__hash__() ^ self.y.__hash__()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Point(%.2f, %.2f)" % (self.x, self.y)
 
 
 class Edge:
     __slots__ = ('p1', 'p2')
 
-    def __init__(self, point1: Point, point2: Point):
+    p1: Point
+    p2: Point
+
+    def __init__(self, point1: Point, point2: Point) -> None:
         self.p1 = point1
         self.p2 = point2
 
-    def get_adjacent(self, point: Point):
+    def get_adjacent(self, point: Point) -> Point:
         if point == self.p1:
             return self.p2
         return self.p1
 
-    def __contains__(self, point: Point):
+    def __contains__(self, point: Point) -> bool:
         return self.p1 == point or self.p2 == point
 
     def __eq__(self, edge: object) -> bool:
@@ -82,16 +89,16 @@ class Edge:
             return True
         return False
 
-    def __ne__(self, edge: object):
+    def __ne__(self, edge: object) -> bool:
         return not self.__eq__(edge)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "({}, {})".format(self.p1, self.p2)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Edge({!r}, {!r})".format(self.p1, self.p2)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return self.p1.__hash__() ^ self.p2.__hash__()
 
 
@@ -112,10 +119,10 @@ class Graph:
     given a polygon ID of -1 and not maintained in the dict.
     """
 
-    def __init__(self, polygons: list[list[Point]]):
-        self.graph = defaultdict(set)
-        self.edges = set()
-        self.polygons = defaultdict(set)
+    def __init__(self, polygons: list[list[Point]]) -> None:
+        self.graph: defaultdict[Point, set[Edge]] = defaultdict(set)
+        self.edges: set[Edge] = set()
+        self.polygons: defaultdict[int, set[Edge]] = defaultdict(set)
         # Per-polygon bounding boxes, filled lazily by visible_vertices.
         self._polygon_bounds: dict[int, tuple[float, float, float, float]] \
             | None = None
@@ -134,33 +141,33 @@ class Graph:
             if len(polygon) > 2:
                 pid += 1
 
-    def get_adjacent_points(self, point: Point):
+    def get_adjacent_points(self, point: Point) -> list[Point]:
         return [edge.get_adjacent(point) for edge in self[point]]
 
-    def get_points(self):
+    def get_points(self) -> list[Point]:
         return list(self.graph)
 
-    def get_edges(self):
+    def get_edges(self) -> set[Edge]:
         return self.edges
 
-    def add_edge(self, edge: Edge):
+    def add_edge(self, edge: Edge) -> None:
         self.graph[edge.p1].add(edge)
         self.graph[edge.p2].add(edge)
         self.edges.add(edge)
 
-    def __contains__(self, item: object):
+    def __contains__(self, item: object) -> bool:
         if isinstance(item, Point):
             return item in self.graph
         if isinstance(item, Edge):
             return item in self.edges
         return False
 
-    def __getitem__(self, point: Point):
+    def __getitem__(self, point: Point) -> set[Edge]:
         if point in self.graph:
             return self.graph[point]
         return set()
 
-    def __str__(self):
+    def __str__(self) -> str:
         res = ""
         for point in self.graph:
             res += "\n" + str(point) + ": "
@@ -168,5 +175,5 @@ class Graph:
                 res += str(edge)
         return res
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()

@@ -39,7 +39,8 @@ T = 10**COLIN_TOLERANCE
 T2 = 10.0**COLIN_TOLERANCE
 
 def visible_vertices(point: Point, graph: Graph, origin: Point | None = None,
-                     destination: Point | None = None, scan: str = 'full'):
+                     destination: Point | None = None,
+                     scan: str = 'full') -> list[Point]:
     """Returns list of Points in graph visible by point.
 
     If origin and/or destination Points are given, these will also be checked
@@ -116,7 +117,7 @@ def visible_vertices(point: Point, graph: Graph, origin: Point | None = None,
     return visible
 
 
-def polygon_crossing(p1: Point, poly_edges: Iterable[Edge]):
+def polygon_crossing(p1: Point, poly_edges: Iterable[Edge]) -> bool:
     """Returns True if Point p1 is internal to the polygon. The polygon is
     defined by the Edges in poly_edges. Uses crossings algorithm and takes into
     account edges that are collinear to p1."""
@@ -141,7 +142,8 @@ def polygon_crossing(p1: Point, poly_edges: Iterable[Edge]):
     return True
 
 
-def _polygon_bounds(graph: Graph):
+def _polygon_bounds(
+        graph: Graph) -> dict[int, tuple[float, float, float, float]]:
     """Return {polygon_id: (minx, miny, maxx, maxy)}, cached on the graph.
 
     Computed lazily (rather than in Graph.__init__) so graphs unpickled
@@ -158,7 +160,7 @@ def _polygon_bounds(graph: Graph):
     return bounds
 
 
-def point_in_solid(p: Point, graph: Graph):
+def point_in_solid(p: Point, graph: Graph) -> bool:
     """Return True if p is in solid obstacle space, i.e. interior to an odd
     number of polygons (even-odd rule). The hole ring of a donut-shaped
     obstacle contains its courtyard twice, so the courtyard is free space."""
@@ -171,7 +173,7 @@ def point_in_solid(p: Point, graph: Graph):
     return crossings % 2 == 1
 
 
-def edge_in_polygon(p1: Point, p2: Point, graph: Graph):
+def edge_in_polygon(p1: Point, p2: Point, graph: Graph) -> bool:
     """Return true if the edge from p1 to p2 passes through solid obstacle
     space, tested at the edge mid-point with the even-odd rule. Assumes the
     edge does not cross any polygon edge (the sweep checks that), so the
@@ -180,7 +182,7 @@ def edge_in_polygon(p1: Point, p2: Point, graph: Graph):
     return point_in_solid(mid_point, graph)
 
 
-def point_in_polygon(p: Point, graph: Graph):
+def point_in_polygon(p: Point, graph: Graph) -> int:
     """Return true if the point p is interior to any polygon in graph."""
     for polygon in graph.polygons:
         if polygon_crossing(p, graph.polygons[polygon]):
@@ -188,13 +190,13 @@ def point_in_polygon(p: Point, graph: Graph):
     return -1
 
 
-def unit_vector(c: Point, p: Point):
+def unit_vector(c: Point, p: Point) -> Point:
     magnitude = edge_distance(c, p)
     return Point((p.x - c.x) / magnitude, (p.y - c.y) / magnitude)
 
 
 def closest_point(p: Point, graph: Graph, polygon_id: int,
-                  length: float = 0.001):
+                  length: float = 0.001) -> Point:
     """Assumes p is interior to the polygon with polygon_id. Returns the
     closest point c outside the polygon to p, where the distance from c to
     the intersect point from p to the edge of the polygon is length."""
@@ -239,12 +241,12 @@ def closest_point(p: Point, graph: Graph, polygon_id: int,
         return Point(close_point.x + v.x*length, close_point.y + v.y*length)
 
 
-def edge_distance(p1: Point, p2: Point):
+def edge_distance(p1: Point, p2: Point) -> float:
     """Return the Euclidean distance between two Points."""
     return sqrt((p2.x - p1.x)**2 + (p2.y - p1.y)**2)
 
 
-def intersect_point(p1: Point, p2: Point, edge: Edge):
+def intersect_point(p1: Point, p2: Point, edge: Edge) -> Point | None:
     """Return intersect Point where the edge from p1, p2 intersects edge"""
     if p1 in edge: return p1
     if p2 in edge: return p2
@@ -271,7 +273,7 @@ def intersect_point(p1: Point, p2: Point, edge: Edge):
     return Point(intersect_x, intersect_y)
 
 
-def point_edge_distance(p1: Point, p2: Point, edge: Edge):
+def point_edge_distance(p1: Point, p2: Point, edge: Edge) -> float:
     """Return the Eucledian distance from p1 to intersect point with edge.
     Assumes the line going from p1 to p2 intersects edge before reaching p2."""
     ip = intersect_point(p1, p2, edge)
@@ -280,7 +282,7 @@ def point_edge_distance(p1: Point, p2: Point, edge: Edge):
     return 0
 
 
-def angle(center: Point, point: Point):
+def angle(center: Point, point: Point) -> float:
     """Return the angle (radian) of point from center of the radian circle.
      ------p
      |   /
@@ -304,7 +306,7 @@ def angle(center: Point, point: Point):
     return atan(dy / dx)
 
 
-def angle2(point_a: Point, point_b: Point, point_c: Point):
+def angle2(point_a: Point, point_b: Point, point_c: Point) -> float:
     """Return angle B (radian) between point_b and point_c.
            c
          /  \
@@ -318,7 +320,7 @@ def angle2(point_a: Point, point_b: Point, point_c: Point):
     return acos(int(cos_value*T)/T2)
 
 
-def ccw(A: Point, B: Point, C: Point):
+def ccw(A: Point, B: Point, C: Point) -> int:
     """Return 1 if counter clockwise, -1 if clock wise, 0 if collinear """
     #  Rounding this way is faster than calling round()
     area = int(((B.x - A.x) * (C.y - A.y) - (B.y - A.y) * (C.x - A.x))*T)/T2
@@ -327,7 +329,7 @@ def ccw(A: Point, B: Point, C: Point):
     return 0
 
 
-def on_segment(p: Point, q: Point, r: Point):
+def on_segment(p: Point, q: Point, r: Point) -> bool:
     """Given three colinear points p, q, r, the function checks if point q
     lies on line segment 'pr'."""
     if (q.x <= max(p.x, r.x)) and (q.x >= min(p.x, r.x)):
@@ -336,7 +338,7 @@ def on_segment(p: Point, q: Point, r: Point):
     return False
 
 
-def edge_intersect(p1: Point, q1: Point, edge: Edge):
+def edge_intersect(p1: Point, q1: Point, edge: Edge) -> bool:
     """Return True if edge from A, B interects edge.
     http://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/"""
     p2 = edge.p1
@@ -365,21 +367,22 @@ def edge_intersect(p1: Point, q1: Point, edge: Edge):
 
 
 class OpenEdges:
-    def __init__(self):
-        self._open_edges = []
+    def __init__(self) -> None:
+        self._open_edges: list[Edge] = []
 
-    def insert(self, p1: Point, p2: Point, edge: Edge):
+    def insert(self, p1: Point, p2: Point, edge: Edge) -> None:
         self._open_edges.insert(self._index(p1, p2, edge), edge)
 
-    def delete(self, p1: Point, p2: Point, edge: Edge):
+    def delete(self, p1: Point, p2: Point, edge: Edge) -> None:
         index = self._index(p1, p2, edge) - 1
         if self._open_edges[index] == edge:
             del self._open_edges[index]
 
-    def smallest(self):
+    def smallest(self) -> Edge:
         return self._open_edges[0]
 
-    def _less_than(self, p1: Point, p2: Point, edge1: Edge, edge2: Edge):
+    def _less_than(self, p1: Point, p2: Point, edge1: Edge,
+                   edge2: Edge) -> bool:
         """Return True if edge1 is smaller than edge2, False otherwise."""
         if edge1 == edge2:
             return False
@@ -391,19 +394,18 @@ class OpenEdges:
             return False
         if edge1_dist < edge2_dist:
             return True
-        # If the distance is equal, we need to compare on the edge angles.
-        if edge1_dist == edge2_dist:
-            if edge1.p1 in edge2:
-                same_point = edge1.p1
-            else:
-                same_point = edge1.p2
-            angle_edge1 = angle2(p1, p2, edge1.get_adjacent(same_point))
-            angle_edge2 = angle2(p1, p2, edge2.get_adjacent(same_point))
-            if angle_edge1 < angle_edge2:
-                return True
-            return False
+        # The distance is equal, so compare on the edge angles.
+        if edge1.p1 in edge2:
+            same_point = edge1.p1
+        else:
+            same_point = edge1.p2
+        angle_edge1 = angle2(p1, p2, edge1.get_adjacent(same_point))
+        angle_edge2 = angle2(p1, p2, edge2.get_adjacent(same_point))
+        if angle_edge1 < angle_edge2:
+            return True
+        return False
 
-    def _index(self, p1: Point, p2: Point, edge: Edge):
+    def _index(self, p1: Point, p2: Point, edge: Edge) -> int:
         lo = 0
         hi = len(self._open_edges)
         while lo < hi:
@@ -414,8 +416,8 @@ class OpenEdges:
                 lo = mid + 1
         return lo
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._open_edges)
 
-    def __getitem__(self, index: int):
+    def __getitem__(self, index: int) -> Edge:
         return self._open_edges[index]
