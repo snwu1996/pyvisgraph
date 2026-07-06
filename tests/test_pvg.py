@@ -321,6 +321,49 @@ class TestBuildProgress:
         assert calls and calls[-1] == (total, total)
 
 
+class TestLazyVisibilityGraph:
+
+    def setup_method(self, method):
+        self.polys = [[Point(1, 1), Point(3, 1), Point(3, 3), Point(1, 3)],
+                      [Point(4, 2), Point(6, 2), Point(5, 4)],
+                      [Point(2, 5), Point(4, 5), Point(4, 7), Point(2, 7)]]
+
+    def test_lazy_build_defers_visibility_edges(self):
+        g = vg.VisGraph()
+        g.build(self.polys, lazy=True, status=False)
+        assert g.graph is not None and g.visgraph is not None
+        assert len(g.graph.get_points()) == 11
+        assert len(g.visgraph.get_edges()) == 0
+
+        path = g.shortest_path(Point(0, 0), Point(7, 7))
+        assert path
+        assert 0 < len(g.visgraph.get_edges())
+        assert len(g.visgraph.get_edges()) < len(_eager_edges(self.polys))
+
+    def test_lazy_shortest_paths_match_eager(self):
+        eager = vg.VisGraph()
+        eager.build(self.polys, status=False)
+        lazy = vg.VisGraph()
+        lazy.build(self.polys, lazy=True, status=False)
+
+        pairs = [(Point(0, 0), Point(7, 7)),
+                 (Point(0, 4), Point(7, 1)),
+                 (Point(1, 1), Point(4, 7))]
+        for origin, destination in pairs:
+            eager_path = eager.shortest_path(origin, destination)
+            lazy_path = lazy.shortest_path(origin, destination)
+            assert lazy_path == eager_path
+            assert abs(path_length(lazy_path)
+                       - path_length(eager_path)) < 1e-12
+
+
+def _eager_edges(polys):
+    g = vg.VisGraph()
+    g.build(polys, status=False)
+    assert g.visgraph is not None
+    return g.visgraph.get_edges()
+
+
 class TestShortestPaths:
 
     def setup_method(self, method):

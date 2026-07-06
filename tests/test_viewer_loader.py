@@ -11,6 +11,7 @@ pytest.importorskip("geopandas")
 
 import pyvisgraph as vg
 from pyvisgraph.viewer.loader import load_polygons
+from pyvisgraph.viewer.worker import BuildWorker
 
 KML_DIR = os.path.join(os.path.dirname(__file__), '..', 'examples', 'kml')
 
@@ -156,3 +157,33 @@ class TestBenchmarkMaps:
         path = g.shortest_path(origin, destination)
         assert len(path) >= 2
         assert path[0] == origin and path[-1] == destination
+
+
+class TestViewerLazyBuild:
+
+    def test_worker_passes_lazy_to_visgraph_build(self, monkeypatch):
+        calls = []
+
+        class FakeVisGraph:
+            def build(self, polygons, workers=1, status=True,
+                      progress=None, lazy=False):
+                calls.append({
+                    'polygons': polygons,
+                    'workers': workers,
+                    'status': status,
+                    'progress': progress,
+                    'lazy': lazy,
+                })
+
+        monkeypatch.setattr('pyvisgraph.viewer.worker.vg.VisGraph',
+                            FakeVisGraph)
+        polygons = [[vg.Point(0, 0), vg.Point(1, 0), vg.Point(0, 1)]]
+        worker = BuildWorker(polygons, workers=3, lazy=True)
+        worker.run()
+
+        assert len(calls) == 1
+        assert calls[0]['polygons'] == polygons
+        assert calls[0]['workers'] == 3
+        assert calls[0]['status'] is False
+        assert callable(calls[0]['progress'])
+        assert calls[0]['lazy'] is True

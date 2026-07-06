@@ -19,16 +19,17 @@ class BuildWorker(QThread):
     progress = pyqtSignal(int, int)  # vertices done, total vertices
 
     def __init__(self, polygons: list[list[vg.Point]], workers: int = 1,
-                 parent: QObject | None = None):
+                 lazy: bool = False, parent: QObject | None = None):
         super().__init__(parent)
         self._polygons = polygons
         self._workers = workers
+        self._lazy = lazy
 
     def run(self):
         try:
             graph = vg.VisGraph()
             graph.build(self._polygons, workers=self._workers, status=False,
-                        progress=self.progress.emit)
+                        progress=self.progress.emit, lazy=self._lazy)
         except Exception as e:  # surface any build failure in the UI
             self.failed.emit(str(e))
             return

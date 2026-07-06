@@ -50,6 +50,19 @@ add the number of workers (processes) to the `build` method:
 ```
 >>> g.build(polys, workers=4)
 ```
+
+This branch also contains a proof of concept for lazy visibility-graph
+evaluation. Passing `lazy=True` records the obstacle graph immediately but
+defers obstacle-vertex visibility edges until shortest-path search reaches
+those vertices:
+```
+>>> g.build(polys, lazy=True)
+>>> shortest = g.shortest_path(vg.Point(1.5, 0.0), vg.Point(4.0, 6.0))
+```
+This can reduce up-front build cost when only a few routes are queried. The
+tradeoff is that each first visit to an obstacle vertex computes and caches
+that vertex's visible edges during the query.
+
 Pyvisgraph also has some useful helper functions:
 * `g.update([list of Points])`: Updates the visibility graph
   by checking visibility of each `Point` in the list.

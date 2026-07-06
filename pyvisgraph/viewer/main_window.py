@@ -24,11 +24,12 @@ CLICK_HINT = 'click to set start, click again to set end'
 class MainWindow(QMainWindow):
 
     def __init__(self, path: str, workers: int = 1,
-                 layer: str | None = None):
+                 layer: str | None = None, lazy: bool = False):
         super().__init__()
         self.resize(1000, 750)
 
         self.workers = workers
+        self.lazy = lazy
         self.worker: BuildWorker | None = None
         self.visgraph: vg.VisGraph | None = None
         self.start: vg.Point | None = None
@@ -113,12 +114,13 @@ class MainWindow(QMainWindow):
         skipped_note = ('' if not result.skipped else
                         ' ({} non-polygon geometries skipped)'.format(
                             result.skipped))
+        mode = ' lazily' if self.lazy else ''
         self._status_bar().showMessage(
-            'Building visibility graph ({} polygons)...{}'.format(
-                len(self.polygons), skipped_note))
+            'Building visibility graph{} ({} polygons)...{}'.format(
+                mode, len(self.polygons), skipped_note))
 
         self.worker = BuildWorker(self.polygons, workers=self.workers,
-                                  parent=self)
+                                  lazy=self.lazy, parent=self)
         self.worker.finished_ok.connect(self.on_build_finished)
         self.worker.failed.connect(self.on_build_failed)
         self.worker.progress.connect(self.on_build_progress)
@@ -159,8 +161,13 @@ class MainWindow(QMainWindow):
         self.scene.set_vis_edges(edges)
         self.toggle_edges_action.setEnabled(True)
         self.busy_bar.hide()
-        self._status_bar().showMessage(
-            'Ready ({} visibility edges) - {}'.format(len(edges), CLICK_HINT))
+        if self.lazy:
+            message = 'Ready (lazy, {} cached visibility edges) - {}'.format(
+                len(edges), CLICK_HINT)
+        else:
+            message = 'Ready ({} visibility edges) - {}'.format(
+                len(edges), CLICK_HINT)
+        self._status_bar().showMessage(message)
 
     def on_build_failed(self, message: str):
         if self.sender() is not self.worker:
@@ -216,6 +223,8 @@ class MainWindow(QMainWindow):
                 'No path found: {} inside an obstacle'.format(what))
             return
         path = self.visgraph.shortest_path(self.start, self.end)
+        assert self.visgraph.visgraph is not None
+        self.scene.set_vis_edges(self.visgraph.visgraph.get_edges())
         if not path or len(path) < 2:
             self.scene.set_path(None)
             self._status_bar().showMessage('No path found' + note)

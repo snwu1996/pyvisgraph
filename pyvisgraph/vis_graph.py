@@ -35,6 +35,32 @@ from pyvisgraph.visible_vertices import (visible_vertices, point_in_polygon,
 from pyvisgraph.visible_vertices import closest_point
 
 
+class LazyVisibilityGraph(Graph):
+    """Visibility graph that computes obstacle-vertex edges on demand."""
+
+    def __init__(self, graph: Graph):
+        super().__init__([])
+        self.source_graph = graph
+        self._computed_points: set[Point] = set()
+        for point in graph.get_points():
+            self.graph[point]
+
+    def compute_point(self, point: Point):
+        """Compute and cache visible edges from one obstacle vertex."""
+        if point in self._computed_points or point not in self.source_graph:
+            return
+        for visible in visible_vertices(point, self.source_graph):
+            self.add_edge(Edge(point, visible))
+        self._computed_points.add(point)
+
+    def computed_points(self):
+        return set(self._computed_points)
+
+    def __getitem__(self, point: Point):
+        self.compute_point(point)
+        return super().__getitem__(point)
+
+
 class VisGraph:
 
     def __init__(self):
@@ -53,7 +79,8 @@ class VisGraph:
 
     def build(self, input: list[list[Point]], workers: int = 1,
               status: bool = True,
-              progress: Callable[[int, int], None] | None = None):
+              progress: Callable[[int, int], None] | None = None,
+              lazy: bool = False):
         """Build visibility graph based on a list of polygons.
 
         The input must be a list of polygons, where each polygon is a list of
@@ -66,9 +93,16 @@ class VisGraph:
         Set status=False to turn off the statusbar when building.
         progress, if given, is called as progress(done, total) with the
         number of vertices whose visibility has been computed so far.
+        If lazy=True, obstacle vertices are recorded but visibility edges are
+        computed on demand during shortest-path queries. This avoids the
+        eager O(n^2 log n) build step when only a few queries are needed.
         """
 
         self.graph = Graph(input)
+        if lazy:
+            self.visgraph = LazyVisibilityGraph(self.graph)
+            return
+
         self.visgraph = Graph([])
 
         points = self.graph.get_points()
