@@ -21,7 +21,9 @@ Both algorithms live in `pyvisgraph/shortest_path.py` (`astar` and
 Benchmarked with `examples/profile_shortest_path.py` on the 10 generated
 benchmark maps in `examples/kml/benchmark/` (created by
 `examples/generate_benchmark_kml.py`; jittered convex obstacles of increasing
-count in a 0.5° x 0.5° extent). Per map: 20 seeded-random
+count in a 0.5° x 0.5° extent). Those benchmark scripts and KML maps now live in
+the separate `vgstudio` project (`../visgraph-studio`), which loads the KMLs;
+`astar` itself remains in `pyvisgraph/shortest_path.py`. Per map: 20 seeded-random
 origin/destination pairs in free space, best-of-3 timing per query, and both
 algorithms verified to return paths of identical length on every query.
 
@@ -62,8 +64,12 @@ is reached (the algorithmic work of the search itself).
 
 ### Reproducing
 
+The benchmark scripts and KML maps live in the `vgstudio` project, which pulls
+in geopandas to load KML:
+
 ```bash
-poetry install --extras viewer          # geopandas needed to load KML
+cd ../visgraph-studio
+poetry install
 poetry run python examples/generate_benchmark_kml.py
 poetry run python examples/profile_shortest_path.py
 ```

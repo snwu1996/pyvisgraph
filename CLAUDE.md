@@ -7,7 +7,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This package is managed by **Python Poetry** (`pyproject.toml` + `poetry.lock`). Do not use pip/setup.py directly; run everything through `poetry run` or a `poetry shell`.
 
 ```bash
-poetry install --extras viewer   # dev install incl. optional GUI deps (geopandas, PyQt6)
 poetry install                   # core library only (tqdm is the sole runtime dep)
 poetry lock                      # after changing dependencies in pyproject.toml
 ```
@@ -15,13 +14,14 @@ poetry lock                      # after changing dependencies in pyproject.toml
 ## Commands
 
 ```bash
-poetry run pytest tests/test_pvg.py tests/test_viewer_loader.py   # the reliable test suite
-poetry run pytest tests/test_pvg.py -k test_angle                 # single test by keyword
-poetry run pyvisgraph-viewer examples/kml/simple.kml              # launch the GUI viewer
-tox                                                                # test across py310-py314
+poetry run pytest tests/test_pvg.py tests/test_boundary_scenarios.py   # the reliable test suite
+poetry run pytest tests/test_pvg.py -k test_angle                      # single test by keyword
+tox                                                                     # test across py310-py314
 ```
 
-Caveat: `tests/test_deploy.py` requires GSHHS shapefiles and a prebuilt `world.pk1` that are **not** in the repo (must be downloaded separately); it fails without them. `tests/test_viewer_loader.py` auto-skips when the `viewer` extras are not installed.
+Caveat: `tests/test_deploy.py` requires GSHHS shapefiles and a prebuilt `world.pk1` that are **not** in the repo (must be downloaded separately); it fails without them.
+
+The interactive GUI viewer that used to live here (`pyvisgraph/viewer/`, the `pyvisgraph-viewer` script) has moved to the separate **`vgstudio`** project (`../visgraph-studio`), which depends on this library via a local path. All geopandas/PyQt6/shapely dependencies and the example/benchmark KML maps moved with it.
 
 ## Architecture
 
@@ -34,18 +34,10 @@ Core library (`pyvisgraph/`) is a planar visibility-graph builder + Dijkstra sho
 
 All math is **Euclidean/planar**; geographic data uses the convention x=longitude, y=latitude, and real-world distances are computed outside the library (see `examples/2_calculate_shortest_distance.py`, which uses haversine).
 
-### GUI viewer (`pyvisgraph/viewer/`)
+### Tests
 
-Optional PyQt6 + geopandas viewer, exposed as the `pyvisgraph-viewer` script (entry point in `[tool.poetry.scripts]`). Hard rules:
-
-- geopandas/PyQt6 are **optional extras** (`viewer`). Never import them at module level anywhere that gets pulled in by `import pyvisgraph` — `cli.py` guards its imports and prints an install hint when they are missing.
-- CI (`.github/workflows/ci.yml`) tests Python 3.10-3.14 with Poetry 1.8.2; the viewer extras are only installed on 3.12.
-- `loader.py` must stay Qt-free so loader tests run headless. It converts any geopandas-readable file into pyvisgraph polygons: MultiPolygons are exploded, overlapping/touching polygons are dissolved into their union (the sweep in `visible_vertices.py` assumes polygon edges never cross) with the as-authored shapes kept in `LoadResult.raw_polygons` for display (rings oriented exterior-CCW/hole-CW for the scene's winding fill), interior rings (holes) become separate obstacle polygons, non-polygon geometries are skipped.
-- Exclusion zones: a feature whose `Name` equals `boundary_name` (default `boundary`, case-insensitive; CLI `--boundary`) is the **outer navigable boundary** — everything outside it is off-limits. Rather than changing the shapely-free core, the loader inverts the map with the same even-odd trick as a donut: `off_limits = frame.difference(boundary.difference(obstacles))`, where `frame` is the bounds grown by `FRAME_MARGIN_FRAC`. Those rings go in `LoadResult.polygons`; `LoadResult.boundary` holds the boundary rings (None when there is no such feature → unchanged behavior). Obstacles may cross or sit outside the boundary — the shapely booleans resolve the crossings so the sweep still sees non-crossing rings. The scene shades the off-limits area, keeps the navigable interior white, and outlines the boundary.
-- `worker.py` runs the blocking `VisGraph.build()` on a QThread; `scene.py`/`view.py` render with a y-flipped view (map north = screen up) and cosmetic pens (constant pixel width under zoom). Visibility edges are batched into a single `QGraphicsPathItem` for performance.
-- GUI behavior can be smoke-tested headless with `QT_QPA_PLATFORM=offscreen`.
-
-Example obstacle maps for the viewer live in `examples/kml/` (simple/medium/complex/overlapping/nopath/crossing); every one carries a `boundary` exclusion zone, and `crossing.kml` has obstacles straddling it.
+- `tests/test_pvg.py` — the core geometry/graph/shortest-path unit tests.
+- `tests/test_boundary_scenarios.py` — even-odd donut, exclusion-zone boundary inversion, and concave-detour behaviors built from **in-memory polygons** (no geopandas/KML). This replaces the coverage the old viewer loader test gave, keeping the suite self-contained; the KML-driven loader tests now live in the `vgstudio` project.
 
 ## Conventions (from CONTRIBUTING.md)
 

@@ -38,13 +38,7 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
-      # The viewer extras (geopandas, PyQt6) are heavy; exercise them on one
-      # version only. tests/test_viewer_loader.py auto-skips without them.
-      - name: Install viewer extras
-        if: matrix.python-version == '3.12'
-        run: poetry install --extras viewer
-
       # tests/test_deploy.py is excluded: it needs GSHHS shapefiles that are
       # not in the repository.
       - name: Run tests
-        run: poetry run pytest tests/test_pvg.py tests/test_viewer_loader.py -v
+        run: poetry run pytest tests/test_pvg.py tests/test_boundary_scenarios.py -v
