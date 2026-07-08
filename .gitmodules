@@ -1,0 +1,3 @@
+[submodule "extern/cvisgraph"]
+	path = extern/cvisgraph
+	url = https://github.com/snwu1996/cvisgraph.git

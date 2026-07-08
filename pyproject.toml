@@ -12,7 +12,19 @@ packages = [{ include = "pyvisgraph" }]
 include = [
     { path = "examples", format = "sdist" },
     { path = "CONTRIBUTING.md", format = "sdist" },
+    # C backend: build.py compiles these into pyvisgraph/libcvisgraph.so at
+    # build time, so the sdist must carry the pinned submodule's sources.
+    { path = "build.py", format = "sdist" },
+    { path = "extern/cvisgraph/src/*.c", format = "sdist" },
+    { path = "extern/cvisgraph/src/*.h", format = "sdist" },
+    { path = "extern/cvisgraph/include/*.h", format = "sdist" },
+    { path = "extern/cvisgraph/LICENSE.txt", format = "sdist" },
 ]
+
+[tool.poetry.build]
+# Compile the cvisgraph C backend on build/install; emits a platform wheel.
+script = "build.py"
+generate-setup-file = true
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -23,5 +35,5 @@ pytest = "^8.0"
 pyshp = "^2.3"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core", "setuptools"]
 build-backend = "poetry.core.masonry.api"

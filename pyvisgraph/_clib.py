@@ -3,12 +3,14 @@
 The shared library is looked up, in order:
 
 1. the CVISGRAPH_LIB environment variable (a path to the .so itself),
-2. this package directory (where `make cbackend` copies it),
+2. this package directory -- the normal case: `build.py` compiles the
+   pinned `extern/cvisgraph` submodule into `pyvisgraph/libcvisgraph.so`
+   during `poetry build`/`poetry install`/`pip install`, so an installed
+   package finds it right here,
 3. $CVISGRAPH_DIR/libcvisgraph.so,
-4. the local cvisgraph checkout next to this repository
-   (~/Projects/VisibilityGraphs/cvisgraph) -- for now the C library is
-   consumed from that local folder; eventually this will resolve against
-   a cvisgraph release fetched from GitHub instead,
+4. a sibling cvisgraph checkout next to this repository
+   (~/Projects/VisibilityGraphs/cvisgraph) -- a dev fallback for running
+   from the source tree against a hand-built .so,
 5. the system library path.
 """
 from __future__ import annotations
@@ -27,7 +29,7 @@ def _candidates():
     env_dir = os.environ.get('CVISGRAPH_DIR')
     if env_dir:
         yield os.path.join(env_dir, _LIB_NAME)
-    # Sibling checkout of the cvisgraph repository (local for now, see
+    # Sibling checkout of the cvisgraph repository (dev fallback, see
     # module docstring).
     repo_parent = os.path.dirname(os.path.dirname(pkg_dir))
     yield os.path.join(repo_parent, 'cvisgraph', _LIB_NAME)
@@ -44,9 +46,11 @@ def _load() -> ctypes.CDLL:
         except OSError as exc:
             errors.append(f'{path}: {exc}')
     raise ImportError(
-        'could not load libcvisgraph.so; run `make cbackend` in the '
-        'repository root (or `make` in the cvisgraph checkout), or set '
-        'CVISGRAPH_LIB/CVISGRAPH_DIR. Tried:\n  ' + '\n  '.join(errors))
+        'could not load libcvisgraph.so; run `poetry install` (or '
+        '`make cbackend`) to compile the C backend -- if the extern/'
+        'cvisgraph submodule is empty, run `git submodule update --init '
+        '--recursive` first -- or set CVISGRAPH_LIB/CVISGRAPH_DIR. '
+        'Tried:\n  ' + '\n  '.join(errors))
 
 
 lib = _load()
