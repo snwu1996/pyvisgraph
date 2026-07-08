@@ -2,6 +2,20 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## This branch: cvisgraph C backend (`snwu/cvisgraph`)
+
+This branch replaces the pure-Python algorithm internals with **cvisgraph**, a C library implementing the same algorithms 1:1 (identical results, ~40x faster single-threaded, ~100x with 4 worker threads). The public API is unchanged. Key differences from `main`:
+
+- The geometry/sweep/shortest-path code paths call `libcvisgraph.so` through `pyvisgraph/_clib.py` (stdlib ctypes). `Point`/`Edge`/`Graph` remain pure Python; `Graph._to_c()` caches the C-side conversion.
+- `build(workers=N)` uses pthreads inside the C library instead of multiprocessing.
+- `save()`/`load()` use a new snapshot pickle format; `.pk1` files from `main` cannot be loaded.
+- **Build step required**: `make cbackend` compiles the C library and copies `libcvisgraph.so` into the package. `CVISGRAPH_DIR` points at the local sibling checkout `../cvisgraph` for now (eventually a cvisgraph release from GitHub). `_clib.py` also honors `CVISGRAPH_LIB`/`CVISGRAPH_DIR` env vars at import time.
+
+```bash
+make cbackend    # build the C backend (requires ../cvisgraph checkout)
+make test        # cbackend + the reliable pytest suite
+```
+
 ## Package management
 
 This package is managed by **Python Poetry** (`pyproject.toml` + `poetry.lock`). Do not use pip/setup.py directly; run everything through `poetry run` or a `poetry shell`.

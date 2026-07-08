@@ -1,33 +1,23 @@
-"""
-The MIT License (MIT)
+"""Shortest path over a visibility graph, running in libcvisgraph.
 
-Copyright (c) 2016 Christian August Reksten-Monsen
+The module-level shortest_path() mirrors pyvisgraph.shortest_path (Graph in,
+list of Points out, optional add_to_visgraph with temporary edges); PathGraph
+is the reusable C-side structure VisGraph caches between queries.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+See graph.py for the license.
 """
 from __future__ import annotations
 
-from heapq import heapify, heappush, heappop
-from itertools import count
+import ctypes
 
+from pyvisgraph import _clib
+from pyvisgraph._clib import lib
 from pyvisgraph.graph import Graph, Point
 from pyvisgraph.visible_vertices import edge_distance
+
+_ALGORITHMS = ('astar', 'dijkstra')
+
+Coord = tuple[float, float]
 
 
 def path_length(path: list[Point]) -> float:
@@ -40,152 +30,108 @@ def path_length(path: list[Point]) -> float:
     return sum(edge_distance(p1, p2) for p1, p2 in zip(path, path[1:]))
 
 
-def astar(graph: Graph, origin: Point, destination: Point,
-          add_to_visgraph: Graph | None):
-    """A* search from origin to destination.
+class PathGraph:
+    """C-side node/edge structure for shortest-path queries.
 
-    Uses the Euclidean distance to the destination as heuristic, which is
-    admissible and consistent on a visibility graph with Euclidean edge
-    weights, so the result is the same optimal path Dijkstra finds while
-    settling fewer nodes. Returns (D, P) with the same meaning as dijkstra:
-    D maps settled points to their cost from origin, P maps points to their
-    predecessor on the shortest path.
+    Nodes are the unique endpoints of the visibility edges (exactly the
+    points a pyvisgraph visibility Graph has as keys); temporary
+    origin/destination nodes and edges are passed per query.
     """
-    D = {}
-    P = {}
-    G = {origin: 0}
-    tiebreak = count()
-    open_heap = [(edge_distance(origin, destination), next(tiebreak), origin)]
 
-    while open_heap:
-        f, _, v = heappop(open_heap)
-        if v in D:
-            continue
-        D[v] = G[v]
-        if v == destination: break
+    def __init__(self, edges: list[tuple[Coord, Coord]]) -> None:
+        node_index: dict[Coord, int] = {}
+        coords: list[float] = []
+        pairs: list[int] = []
 
-        edges = graph[v]
-        if add_to_visgraph != None and len(add_to_visgraph[v]) > 0:
-            edges = add_to_visgraph[v] | graph[v]
-        for e in edges:
-            w = e.get_adjacent(v)
-            if w in D:
-                continue
-            elength = D[v] + edge_distance(v, w)
-            if w not in G or elength < G[w]:
-                G[w] = elength
-                P[w] = v
-                heappush(open_heap, (elength + edge_distance(w, destination),
-                                     next(tiebreak), w))
-    return (D, P)
+        def node(c: Coord) -> int:
+            idx = node_index.get(c)
+            if idx is None:
+                idx = len(node_index)
+                node_index[c] = idx
+                coords.extend(c)
+            return idx
+
+        for a, b in edges:
+            pairs.append(node(a))
+            pairs.append(node(b))
+
+        self.n = len(node_index)
+        self._coords = coords
+        handle = lib.cvg_pathgraph_new(
+            self.n, _clib.as_double_array(coords),
+            len(edges), _clib.as_int32_array(pairs))
+        if not handle:
+            raise ValueError('invalid path graph data')
+        self.handle = handle
+
+    def __del__(self):
+        handle = getattr(self, 'handle', None)
+        if handle:
+            try:
+                lib.cvg_pathgraph_free(handle)
+            except (AttributeError, TypeError):
+                pass  # interpreter shutdown
+
+    def find(self, c: Coord) -> int:
+        return lib.cvg_pathgraph_find(self.handle, c[0], c[1])
+
+    def shortest(self, origin: int, dest: int, extra_nodes: list[Coord],
+                 extra_edges: list[tuple[int, int]],
+                 algorithm: str) -> list[Coord]:
+        """Return the path as coordinates; empty when unreachable."""
+        exy = _clib.as_double_array([v for c in extra_nodes for v in c])
+        epairs = _clib.as_int32_array([i for e in extra_edges for i in e])
+        out = _clib.c_int32_p()
+        n = lib.cvg_pathgraph_shortest(
+            self.handle, origin, dest, len(extra_nodes), exy,
+            len(extra_edges), epairs, 1 if algorithm == 'astar' else 0,
+            ctypes.byref(out))
+        if n < 0:
+            raise ValueError('shortest path query failed')
+        path = []
+        for i in range(n):
+            node = out[i]
+            if node < self.n:
+                path.append((self._coords[2 * node],
+                             self._coords[2 * node + 1]))
+            else:
+                path.append(extra_nodes[node - self.n])
+        if out:
+            lib.cvg_free(out)
+        return path
 
 
-def dijkstra(graph: Graph, origin: Point, destination: Point,
-             add_to_visgraph: Graph | None):
-    D = {}
-    P = {}
-    Q = priority_dict()
-    Q[origin] = 0
-
-    for v in Q:
-        D[v] = Q[v]
-        if v == destination: break
-
-        edges = graph[v]
-        if add_to_visgraph != None and len(add_to_visgraph[v]) > 0:
-            edges = add_to_visgraph[v] | graph[v]
-        for e in edges:
-            w = e.get_adjacent(v)
-            elength = D[v] + edge_distance(v, w)
-            if w in D:
-                if elength < D[w]:
-                    raise ValueError
-            elif w not in Q or elength < Q[w]:
-                Q[w] = elength
-                P[w] = v
-    return (D, P)
+def _check_algorithm(algorithm: str) -> None:
+    if algorithm not in _ALGORITHMS:
+        raise ValueError("unknown algorithm: {}".format(algorithm))
 
 
 def shortest_path(graph: Graph, origin: Point, destination: Point,
                   add_to_visgraph: Graph | None = None,
-                  algorithm: str = 'astar'):
-    if algorithm == 'astar':
-        D, P = astar(graph, origin, destination, add_to_visgraph)
-    elif algorithm == 'dijkstra':
-        D, P = dijkstra(graph, origin, destination, add_to_visgraph)
-    else:
-        raise ValueError("unknown algorithm: {}".format(algorithm))
-    path = []
-    if destination != origin and destination not in P:
-        return path  # destination is unreachable from origin
-    while 1:
-        path.append(destination)
-        if destination == origin: break
-        destination = P[destination]
-    path.reverse()
-    return path
+                  algorithm: str = 'astar') -> list[Point]:
+    _check_algorithm(algorithm)
+    pg = PathGraph([((e.p1.x, e.p1.y), (e.p2.x, e.p2.y))
+                    for e in graph.get_edges()])
 
+    extra_nodes: list[Coord] = []
+    extra_edges: list[tuple[int, int]] = []
 
-class priority_dict(dict):
-    """Dictionary that can be used as a priority queue.
+    def node(c: Coord) -> int:
+        idx = pg.find(c)
+        if idx >= 0:
+            return idx
+        for i, existing in enumerate(extra_nodes):
+            if existing == c:
+                return pg.n + i
+        extra_nodes.append(c)
+        return pg.n + len(extra_nodes) - 1
 
-    Keys of the dictionary are items to be put into the queue, and values
-    are their respective priorities. All dictionary methods work as expected.
-    The advantage over a standard heapq-based priority queue is that priorities
-    of items can be efficiently updated (amortized O(1)) using code as
-    'thedict[item] = new_priority.'
+    o_node = node((origin.x, origin.y))
+    d_node = node((destination.x, destination.y))
+    if add_to_visgraph is not None:
+        for e in add_to_visgraph.get_edges():
+            extra_edges.append((node((e.p1.x, e.p1.y)),
+                                node((e.p2.x, e.p2.y))))
 
-    Note that this is a modified version of
-    https://gist.github.com/matteodellamico/4451520 where sorted_iter() has
-    been replaced with the destructive sorted iterator __iter__ from
-    https://gist.github.com/anonymous/4435950
-    """
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._rebuild_heap()
-
-    def _rebuild_heap(self):
-        self._heap = [(v, k) for k, v in self.items()]
-        heapify(self._heap)
-
-    def smallest(self):
-        heap = self._heap
-        v, k = heap[0]
-        while k not in self or self[k] != v:
-            heappop(heap)
-            v, k = heap[0]
-        return k
-
-    def pop_smallest(self):
-        heap = self._heap
-        v, k = heappop(heap)
-        while k not in self or self[k] != v:
-            v, k = heappop(heap)
-        del self[k]
-        return k
-
-    def __setitem__(self, key: object, val: object):
-        super().__setitem__(key, val)
-
-        if len(self._heap) < 2 * len(self):
-            heappush(self._heap, (val, key))
-        else:
-            self._rebuild_heap()
-
-    def setdefault(self, key: object, val: object = None):
-        if key not in self:
-            self[key] = val
-            return val
-        return self[key]
-
-    def update(self, *args, **kwargs):
-        super().update(*args, **kwargs)
-        self._rebuild_heap()
-
-    def __iter__(self):
-        def iterfn():
-            while len(self) > 0:
-                x = self.smallest()
-                yield x
-                del self[x]
-        return iterfn()
+    path = pg.shortest(o_node, d_node, extra_nodes, extra_edges, algorithm)
+    return [Point(x, y) for x, y in path]

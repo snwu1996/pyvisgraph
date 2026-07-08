@@ -2,6 +2,7 @@
 The MIT License (MIT)
 
 Copyright (c) 2016 Christian August Reksten-Monsen
+Copyright (c) 2026 cvisgraph contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,10 +21,18 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+Point, Edge and Graph are pure-Python containers with the exact semantics of
+pyvisgraph.graph; the geometry algorithms that consume them run in
+libcvisgraph via the cached _CGraph conversion.
 """
 from __future__ import annotations
 
+import ctypes
 from collections import defaultdict
+
+from pyvisgraph import _clib
+from pyvisgraph._clib import lib
 
 
 class Point:
@@ -102,6 +111,74 @@ class Edge:
         return self.p1.__hash__() ^ self.p2.__hash__()
 
 
+class _CGraph:
+    """Owner of a cvg_graph handle plus the index maps needed to translate
+    between Point objects and C vertex/polygon indices."""
+
+    def __init__(self, graph: 'Graph') -> None:
+        points = graph.get_points()
+        index = {p: i for i, p in enumerate(points)}
+        edges = list(graph.get_edges())
+        edge_index = {e: i for i, e in enumerate(edges)}
+        xy = _clib.as_double_array(
+            [c for p in points for c in (p.x, p.y)])
+        pairs = _clib.as_int32_array(
+            [i for e in edges for i in (index[e.p1], index[e.p2])])
+
+        poly_keys = sorted(graph.polygons)
+        offsets = [0]
+        poly_edges: list[int] = []
+        for pid in poly_keys:
+            poly_edges.extend(edge_index[e] for e in graph.polygons[pid])
+            offsets.append(len(poly_edges))
+        offs = _clib.as_int32_array(offsets)
+        pedges = _clib.as_int32_array(poly_edges)
+
+        handle = lib.cvg_graph_new(len(points), xy, len(edges), pairs,
+                                   len(poly_keys), offs, pedges)
+        if not handle:
+            raise ValueError('invalid graph data')
+        self.handle = handle
+        self.points = points          # C vertex index -> canonical Point
+        self.poly_keys = poly_keys    # C polygon index -> Graph polygon id
+
+    def __del__(self):
+        handle = getattr(self, 'handle', None)
+        if handle:
+            try:
+                lib.cvg_graph_free(handle)
+            except (AttributeError, TypeError):
+                pass  # interpreter shutdown
+
+    def visible_from(self, px: float, py: float, origin: Point | None = None,
+                     destination: Point | None = None,
+                     scan_half: bool = False) -> list[tuple[float, float, int]]:
+        """Run the sweep; returns (x, y, vertex index or -1) tuples."""
+        o = _clib.as_double_array([origin.x, origin.y]) if origin else None
+        d = (_clib.as_double_array([destination.x, destination.y])
+             if destination else None)
+        out = ctypes.POINTER(_clib.VisPt)()
+        n = lib.cvg_visible_from(self.handle, px, py, o, d,
+                                 1 if scan_half else 0, ctypes.byref(out))
+        if n < 0:
+            raise MemoryError('cvg_visible_from failed')
+        result = [(out[i].x, out[i].y, out[i].vertex) for i in range(n)]
+        lib.cvg_free(out)
+        return result
+
+    def visible_points(self, px: float, py: float,
+                       origin: Point | None = None,
+                       destination: Point | None = None,
+                       scan_half: bool = False) -> list[Point]:
+        """Like visible_from, but resolves graph vertices to their canonical
+        Point objects (the ones pyvisgraph would return)."""
+        result = []
+        for x, y, vertex in self.visible_from(px, py, origin, destination,
+                                              scan_half):
+            result.append(self.points[vertex] if vertex >= 0 else Point(x, y))
+        return result
+
+
 class Graph:
     """
     A Graph is represented by a dict where the keys are Points in the Graph
@@ -123,9 +200,7 @@ class Graph:
         self.graph: defaultdict[Point, set[Edge]] = defaultdict(set)
         self.edges: set[Edge] = set()
         self.polygons: defaultdict[int, set[Edge]] = defaultdict(set)
-        # Per-polygon bounding boxes, filled lazily by visible_vertices.
-        self._polygon_bounds: dict[int, tuple[float, float, float, float]] \
-            | None = None
+        self._c: _CGraph | None = None
         pid = 0
         for polygon in polygons:
             if polygon[0] == polygon[-1] and len(polygon) > 1:
@@ -154,6 +229,12 @@ class Graph:
         self.graph[edge.p1].add(edge)
         self.graph[edge.p2].add(edge)
         self.edges.add(edge)
+        self._c = None  # invalidate the cached C conversion
+
+    def _to_c(self) -> _CGraph:
+        if self._c is None:
+            self._c = _CGraph(self)
+        return self._c
 
     def __contains__(self, item: object) -> bool:
         if isinstance(item, Point):
