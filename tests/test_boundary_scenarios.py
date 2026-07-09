@@ -179,6 +179,71 @@ class TestInvertBoundaryHelper:
         assert min(p.x for p in rings[0]) < -100
 
 
+class TestNearCollinearSweep:
+    """Buffered/dissolved geometry (shapely mitre joins) produces several ring
+    vertices along one straight line whose angles from each other differ only
+    by float noise. The rotational sweep must still scan such same-ray points
+    near to far, or its collinear occlusion logic is bypassed and visibility
+    edges cut through solid space. These rings are the exact output of
+    buffering a real map (obstacle buffer 5, boundary buffer 10) where three
+    obstacles merged into the exclusion zone; A, N, C and B below lie on one
+    grown obstacle edge line, with a solid lobe between N and C."""
+
+    FRAME = [vg.Point(-196.04142204827136, -82.87046873543937),
+             vg.Point(288.5013512254217, -82.87046873543937),
+             vg.Point(288.5013512254217, 162.01616811108005),
+             vg.Point(-196.04142204827136, 162.01616811108005)]
+    NAVIGABLE = [vg.Point(-142.18572470143152, 103.47323301178456),
+                 vg.Point(-157.850083828513, -26.773012322651912),
+                 vg.Point(69.84314148261413, -45.806192147421044),
+                 vg.Point(243.4064260875464, -29.326445932407275),
+                 vg.Point(250.96818779123717, 124.86773837328697),
+                 vg.Point(-103.14341426600883, 120.7204853762201),
+                 vg.Point(-83.29217648830809, 115.36928214918773),
+                 vg.Point(-78.8163402871447, 117.35143818113151),
+                 vg.Point(-76.44989147515085, 113.52484010216273),
+                 vg.Point(-73.16363038521183, 112.63897841704873),
+                 vg.Point(-73.18288498338242, 112.35478663886018),
+                 vg.Point(-75.53877952187852, 112.05155268836067),
+                 vg.Point(-54.04224841789887, 77.29120452022337),
+                 vg.Point(119.58061436041926, 98.2189603015385),
+                 vg.Point(190.66739043055574, 32.935186359576456),
+                 vg.Point(35.183292005042254, -13.956843324308554),
+                 vg.Point(-74.99753051624795, 19.50548055252773),
+                 vg.Point(-59.38511434772077, 74.00700608629538),
+                 vg.Point(-121.5255228705173, 67.35729447315481),
+                 vg.Point(-131.52064721725768, 94.01095939779576),
+                 vg.Point(-97.03010468619107, 109.2853425186967)]
+    POCKET = [vg.Point(-140.1635891369843, 120.28691576061408),
+              vg.Point(-140.84032399580423, 114.65999073079666),
+              vg.Point(-132.1078570587093, 120.38126217234162)]
+
+    # Same ray from A (ccw-collinear within COLIN_TOLERANCE): its ring
+    # neighbour N, then C and B across the solid lobe.
+    A = vg.Point(-131.52064721725768, 94.01095939779576)
+    N = vg.Point(-97.03010468619107, 109.2853425186967)
+    C = vg.Point(-83.29217648830809, 115.36928214918773)
+    B = vg.Point(-78.8163402871447, 117.35143818113151)
+
+    def _build(self):
+        return build([self.FRAME, self.NAVIGABLE, self.POCKET])
+
+    def test_lobe_between_the_collinear_points_is_solid(self):
+        graph = self._build()
+        mid = vg.Point((self.N.x + self.C.x) / 2, (self.N.y + self.C.y) / 2)
+        assert graph.point_in_solid(mid)
+
+    def test_no_visibility_edge_through_the_lobe(self):
+        graph = self._build()
+        visible = {edge.get_adjacent(self.A)
+                   for edge in graph.visgraph[self.A]}
+        # The nearer collinear point is A's ring neighbour and stays visible;
+        # the two beyond the solid lobe must be occluded.
+        assert self.N in visible
+        assert self.C not in visible
+        assert self.B not in visible
+
+
 class TestConcaveDetour:
     """A solid peninsula hanging from the top forces a path between two points
     near its base to detour all the way around the tip (port of the loader's

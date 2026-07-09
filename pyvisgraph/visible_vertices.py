@@ -53,7 +53,7 @@ def visible_vertices(point: Point, graph: Graph, origin: Point | None = None,
     points = graph.get_points()
     if origin: points.append(origin)
     if destination: points.append(destination)
-    points.sort(key=lambda p: (angle(point, p), edge_distance(point, p)))
+    _sort_scan_points(point, points, scan)
 
     # Initialize open_edges with any intersecting edges on the half line from
     # point along the positive x-axis
@@ -115,6 +115,42 @@ def visible_vertices(point: Point, graph: Graph, origin: Point | None = None,
         prev = p
         prev_visible = is_visible
     return visible
+
+
+def _sort_scan_points(point: Point, points: list[Point], scan: str) -> None:
+    """Sort *points* in place into rotational-sweep order around *point*.
+
+    Primary order is angle then distance, but the distance tie-break must
+    fire for every group of points the sweep's occlusion logic treats as
+    collinear (ccw at COLIN_TOLERANCE), not only for bit-identical angles:
+    buffered geometry routinely places several vertices along one straight
+    line, and their angles from a fourth point on that line differ by float
+    noise. Scanning a far same-ray point before the near one whose incident
+    edges occlude it bypasses the collinear occlusion logic and admits
+    visibility edges through solid space. Same-ray points end up adjacent in
+    the angle-sorted list, so each run of consecutive ccw-collinear,
+    same-direction points is re-sorted near to far. A 'half' scan stops at
+    angle pi, so runs there keep past-pi members behind the cutoff instead
+    of pulling them in front of points the scan must still process.
+    """
+    points.sort(key=lambda p: (angle(point, p), edge_distance(point, p)))
+    i, n = 0, len(points)
+    while i < n:
+        j = i + 1
+        while (j < n
+               and ccw(point, points[j - 1], points[j]) == COLLINEAR
+               and ((points[j - 1].x - point.x) * (points[j].x - point.x)
+                    + (points[j - 1].y - point.y)
+                    * (points[j].y - point.y)) > 0):
+            j += 1
+        if j - i > 1:
+            if scan == 'half':
+                key = lambda p: (angle(point, p) > pi,
+                                 edge_distance(point, p))
+            else:
+                key = lambda p: edge_distance(point, p)
+            points[i:j] = sorted(points[i:j], key=key)
+        i = j
 
 
 def polygon_crossing(p1: Point, poly_edges: Iterable[Edge]) -> bool:
